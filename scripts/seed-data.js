@@ -239,13 +239,13 @@ const sampleProducts = [
 ];
 
 async function seedDatabase() {
-  const client = new MongoClient(process.env.MONGO_URL);
+  const client = new MongoClient(MONGO_URL);
   
   try {
     await client.connect();
     console.log('Connected to MongoDB');
     
-    const db = client.db(process.env.DB_NAME);
+    const db = client.db(DB_NAME);
     
     // Clear existing products
     await db.collection('products').deleteMany({});

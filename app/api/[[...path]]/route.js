@@ -81,6 +81,175 @@ async function handleRoute(request, { params }) {
       return handleCORS(NextResponse.json(cleanedStatusChecks))
     }
 
+    // ===== PRODUCTS ENDPOINTS =====
+    
+    // GET /api/products - Get all products (with optional category filter)
+    if (route === '/products' && method === 'GET') {
+      const url = new URL(request.url)
+      const category = url.searchParams.get('category')
+      
+      const query = category ? { category } : {}
+      const products = await db.collection('products').find(query).toArray()
+      
+      return handleCORS(NextResponse.json({ success: true, products }))
+    }
+
+    // GET /api/products/featured - Get featured products
+    if (route === '/products/featured' && method === 'GET') {
+      const products = await db.collection('products')
+        .find({ featured: true })
+        .limit(8)
+        .toArray()
+      
+      return handleCORS(NextResponse.json({ success: true, products }))
+    }
+
+    // GET /api/products/:slug - Get single product by slug
+    if (route.startsWith('/products/') && method === 'GET') {
+      const slug = path[1]
+      const product = await db.collection('products').findOne({ slug })
+      
+      if (!product) {
+        return handleCORS(NextResponse.json(
+          { success: false, error: 'Product not found' }, 
+          { status: 404 }
+        ))
+      }
+      
+      return handleCORS(NextResponse.json({ success: true, product }))
+    }
+
+    // POST /api/products - Create new product (admin only)
+    if (route === '/products' && method === 'POST') {
+      const body = await request.json()
+      
+      const product = {
+        _id: uuidv4(),
+        slug: body.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+        name: body.name,
+        category: body.category,
+        shortDesc: body.shortDesc,
+        longDesc: body.longDesc || '',
+        images: body.images || [],
+        hsCode: body.hsCode || '',
+        moq: body.moq || '1 MT',
+        origin: body.origin || 'India',
+        grade: body.grade || [],
+        specifications: body.specifications || [],
+        packaging: body.packaging || [],
+        featured: body.featured || false,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
+      
+      await db.collection('products').insertOne(product)
+      
+      return handleCORS(NextResponse.json({ success: true, product }))
+    }
+
+    // PUT /api/products/:id - Update product
+    if (route.startsWith('/products/') && method === 'PUT') {
+      const id = path[1]
+      const body = await request.json()
+      
+      const updates = {
+        ...body,
+        updatedAt: new Date()
+      }
+      
+      await db.collection('products').updateOne(
+        { _id: id },
+        { $set: updates }
+      )
+      
+      return handleCORS(NextResponse.json({ success: true }))
+    }
+
+    // DELETE /api/products/:id - Delete product
+    if (route.startsWith('/products/') && method === 'DELETE') {
+      const id = path[1]
+      
+      await db.collection('products').deleteOne({ _id: id })
+      
+      return handleCORS(NextResponse.json({ success: true }))
+    }
+
+    // ===== RFQ ENDPOINTS =====
+    
+    // POST /api/rfq - Submit RFQ
+    if (route === '/rfq' && method === 'POST') {
+      const body = await request.json()
+      
+      const rfq = {
+        _id: uuidv4(),
+        productId: body.productId,
+        productName: body.productName,
+        name: body.name,
+        company: body.company,
+        email: body.email,
+        phone: body.phone,
+        quantity: body.quantity,
+        packaging: body.packaging || '',
+        destination: body.destination,
+        message: body.message || '',
+        status: 'New',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
+      
+      await db.collection('rfqs').insertOne(rfq)
+      
+      return handleCORS(NextResponse.json({ success: true, rfqId: rfq._id }))
+    }
+
+    // GET /api/rfq - Get all RFQs (admin only)
+    if (route === '/rfq' && method === 'GET') {
+      const rfqs = await db.collection('rfqs')
+        .find({})
+        .sort({ createdAt: -1 })
+        .toArray()
+      
+      return handleCORS(NextResponse.json({ success: true, rfqs }))
+    }
+
+    // PUT /api/rfq/:id - Update RFQ status
+    if (route.startsWith('/rfq/') && method === 'PUT') {
+      const id = path[1]
+      const body = await request.json()
+      
+      await db.collection('rfqs').updateOne(
+        { _id: id },
+        { $set: { status: body.status, updatedAt: new Date() } }
+      )
+      
+      return handleCORS(NextResponse.json({ success: true }))
+    }
+
+    // ===== ADMIN STATS =====
+    
+    // GET /api/admin/stats - Get dashboard stats
+    if (route === '/admin/stats' && method === 'GET') {
+      const productsCount = await db.collection('products').countDocuments()
+      const rfqsCount = await db.collection('rfqs').countDocuments()
+      const newRfqsCount = await db.collection('rfqs').countDocuments({ status: 'New' })
+      
+      const recentRfqs = await db.collection('rfqs')
+        .find({})
+        .sort({ createdAt: -1 })
+        .limit(5)
+        .toArray()
+      
+      return handleCORS(NextResponse.json({
+        success: true,
+        stats: {
+          productsCount,
+          rfqsCount,
+          newRfqsCount,
+          recentRfqs
+        }
+      }))
+    }
+
     // Route not found
     return handleCORS(NextResponse.json(
       { error: `Route ${route} not found` }, 

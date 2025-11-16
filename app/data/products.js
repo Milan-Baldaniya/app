@@ -1,13 +1,9 @@
-const { MongoClient } = require('mongodb');
-const { v4: uuidv4 } = require('uuid');
+// Static Products Data
+// You can manually add, edit, or remove products from this file
 
-// Get env vars or use defaults
-const MONGO_URL = process.env.MONGO_URL || 'mongodb://localhost:27017';
-const DB_NAME = process.env.DB_NAME || 'krushi_world_db';
-
-const sampleProducts = [
+export const products = [
   {
-    _id: uuidv4(),
+    id: '1',
     name: 'Turmeric Finger',
     slug: 'turmeric-finger',
     category: 'Spices',
@@ -26,11 +22,9 @@ const sampleProducts = [
     ],
     packaging: ['25kg PP bags', '50kg jute bags', 'Bulk'],
     featured: true,
-    createdAt: new Date(),
-    updatedAt: new Date()
   },
   {
-    _id: uuidv4(),
+    id: '2',
     name: 'Red Chilli',
     slug: 'red-chilli',
     category: 'Spices',
@@ -49,11 +43,9 @@ const sampleProducts = [
     ],
     packaging: ['25kg PP bags', '50kg PP bags'],
     featured: true,
-    createdAt: new Date(),
-    updatedAt: new Date()
   },
   {
-    _id: uuidv4(),
+    id: '3',
     name: 'Basmati Rice',
     slug: 'basmati-rice',
     category: 'Grains',
@@ -72,11 +64,9 @@ const sampleProducts = [
     ],
     packaging: ['25kg PP bags', '50kg jute bags', '1kg retail packs'],
     featured: true,
-    createdAt: new Date(),
-    updatedAt: new Date()
   },
   {
-    _id: uuidv4(),
+    id: '4',
     name: 'Cumin Seeds',
     slug: 'cumin-seeds',
     category: 'Spices',
@@ -95,11 +85,9 @@ const sampleProducts = [
     ],
     packaging: ['25kg PP bags', '50kg jute bags'],
     featured: true,
-    createdAt: new Date(),
-    updatedAt: new Date()
   },
   {
-    _id: uuidv4(),
+    id: '5',
     name: 'Yellow Corn',
     slug: 'yellow-corn',
     category: 'Grains',
@@ -118,11 +106,9 @@ const sampleProducts = [
     ],
     packaging: ['50kg PP bags', 'Bulk'],
     featured: false,
-    createdAt: new Date(),
-    updatedAt: new Date()
   },
   {
-    _id: uuidv4(),
+    id: '6',
     name: 'Chickpeas (Kabuli Chana)',
     slug: 'chickpeas-kabuli',
     category: 'Pulses',
@@ -141,11 +127,9 @@ const sampleProducts = [
     ],
     packaging: ['25kg PP bags', '50kg PP bags'],
     featured: true,
-    createdAt: new Date(),
-    updatedAt: new Date()
   },
   {
-    _id: uuidv4(),
+    id: '7',
     name: 'Peanuts (Groundnuts)',
     slug: 'peanuts-groundnuts',
     category: 'Oil Seeds',
@@ -164,11 +148,9 @@ const sampleProducts = [
     ],
     packaging: ['25kg jute bags', '50kg PP bags', 'Bulk'],
     featured: false,
-    createdAt: new Date(),
-    updatedAt: new Date()
   },
   {
-    _id: uuidv4(),
+    id: '8',
     name: 'Cashew Nuts',
     slug: 'cashew-nuts',
     category: 'Dry Fruits',
@@ -187,11 +169,9 @@ const sampleProducts = [
     ],
     packaging: ['10kg tin', '25kg carton'],
     featured: true,
-    createdAt: new Date(),
-    updatedAt: new Date()
   },
   {
-    _id: uuidv4(),
+    id: '9',
     name: 'Onion (Dehydrated)',
     slug: 'dehydrated-onion',
     category: 'Fresh Vegetables',
@@ -210,11 +190,9 @@ const sampleProducts = [
     ],
     packaging: ['20kg carton with inner bag', '25kg PP bags'],
     featured: false,
-    createdAt: new Date(),
-    updatedAt: new Date()
   },
   {
-    _id: uuidv4(),
+    id: '10',
     name: 'Almonds',
     slug: 'almonds',
     category: 'Dry Fruits',
@@ -233,34 +211,26 @@ const sampleProducts = [
     ],
     packaging: ['10kg carton', '25kg carton'],
     featured: true,
-    createdAt: new Date(),
-    updatedAt: new Date()
   }
-];
+]
 
-async function seedDatabase() {
-  const client = new MongoClient(MONGO_URL);
-  
-  try {
-    await client.connect();
-    console.log('Connected to MongoDB');
-    
-    const db = client.db(DB_NAME);
-    
-    // Clear existing products
-    await db.collection('products').deleteMany({});
-    console.log('Cleared existing products');
-    
-    // Insert sample products
-    await db.collection('products').insertMany(sampleProducts);
-    console.log(`Inserted ${sampleProducts.length} sample products`);
-    
-    console.log('Database seeded successfully!');
-  } catch (error) {
-    console.error('Error seeding database:', error);
-  } finally {
-    await client.close();
-  }
+// Helper functions
+export function getProductBySlug(slug) {
+  return products.find(product => product.slug === slug)
 }
 
-seedDatabase();
+export function getFeaturedProducts() {
+  return products.filter(product => product.featured)
+}
+
+export function getProductsByCategory(category) {
+  if (category === 'All') {
+    return products
+  }
+  return products.filter(product => product.category === category)
+}
+
+export function getAllCategories() {
+  return [...new Set(products.map(product => product.category))]
+}
+

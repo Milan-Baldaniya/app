@@ -1,72 +1,15 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import AnimatedSection from '@/components/AnimatedSection'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { ArrowRight, MessageSquare, Sparkles } from 'lucide-react'
+import { getFeaturedProducts } from '@/app/data/products'
 
 export default function FeaturedProducts() {
-  const [featuredProducts, setFeaturedProducts] = useState([])
-
-  useEffect(() => {
-    fetchFeaturedProducts()
-  }, [])
-
-  const fetchFeaturedProducts = async () => {
-    try {
-      const res = await fetch('/api/products/featured')
-      if (!res.ok) {
-        throw new Error(`API error: ${res.status}`)
-      }
-      const data = await res.json()
-      if (data.success && data.products) {
-        setFeaturedProducts(data.products)
-      } else {
-        throw new Error('Invalid API response')
-      }
-    } catch (error) {
-      console.error('Error fetching products:', error)
-      // Fallback products
-      setFeaturedProducts([
-        {
-          _id: '1',
-          name: 'Turmeric Finger',
-          slug: 'turmeric-finger',
-          category: 'Spices',
-          grade: 'Grade A',
-          moq: '5 MT',
-          shortDesc: 'Premium quality turmeric fingers with high curcumin content from Kerala farms.',
-          origin: 'India',
-          images: [],
-        },
-        {
-          _id: '2',
-          name: 'Red Chili',
-          slug: 'red-chili',
-          category: 'Spices',
-          grade: 'Grade A',
-          moq: '3 MT',
-          shortDesc: 'Vibrant red chilies with excellent heat and color retention for export markets.',
-          origin: 'India',
-          images: [],
-        },
-        {
-          _id: '3',
-          name: 'Green Cardamom',
-          slug: 'green-cardamom',
-          category: 'Spices',
-          grade: 'Premium',
-          moq: '2 MT',
-          shortDesc: 'Aromatic green cardamom pods, hand-picked for superior quality and flavor.',
-          origin: 'India',
-          images: [],
-        },
-      ])
-    }
-  }
+  const featuredProducts = getFeaturedProducts()
 
   return (
     <section className="relative py-24 md:py-32 overflow-hidden">
@@ -88,21 +31,15 @@ export default function FeaturedProducts() {
         </AnimatedSection>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {featuredProducts.length > 0 ? (
-            featuredProducts.slice(0, 3).map((product, index) => (
-              <AnimatedSection
-                key={product._id || product.id}
-                animation="fade-scale"
-                delay={index * 150}
-              >
-                <ProductCard product={product} />
-              </AnimatedSection>
-            ))
-          ) : (
-            <div className="col-span-full text-center py-12 text-muted-foreground">
-              <p>Loading featured products...</p>
-            </div>
-          )}
+          {featuredProducts.slice(0, 3).map((product, index) => (
+            <AnimatedSection
+              key={product.id}
+              animation="fade-scale"
+              delay={index * 150}
+            >
+              <ProductCard product={product} />
+            </AnimatedSection>
+          ))}
         </div>
 
         <AnimatedSection animation="fade-up" delay={500}>
@@ -164,7 +101,7 @@ function ProductCard({ product }) {
         </div>
       </CardContent>
       <CardFooter className="pt-3">
-        <Link href={`/products/${product.slug || product._id}`} className="w-full">
+        <Link href={`/products/${product.slug}`} className="w-full">
           <Button
             variant="default"
             className="w-full group/btn bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 border-0"

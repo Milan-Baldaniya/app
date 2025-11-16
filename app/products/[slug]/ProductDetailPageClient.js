@@ -1,50 +1,14 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useParams } from 'next/navigation'
+import { getProductBySlug } from '@/app/data/products'
 
 export default function ProductDetailPageClient() {
   const params = useParams()
-  const [product, setProduct] = useState(null)
-  const [loading, setLoading] = useState(true)
   const [showRFQForm, setShowRFQForm] = useState(false)
-
-  useEffect(() => {
-    if (params.slug) {
-      fetchProduct()
-    }
-  }, [params.slug])
-
-  const fetchProduct = async () => {
-    try {
-      const res = await fetch(`/api/products/${params.slug}`)
-      if (!res.ok) {
-        throw new Error(`API error: ${res.status}`)
-      }
-      const data = await res.json()
-      if (data.success && data.product) {
-        setProduct(data.product)
-      } else {
-        setProduct(null)
-      }
-    } catch (error) {
-      console.error('Error fetching product:', error)
-      setProduct(null)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="inline-block w-12 h-12 border-4 border-blue-900 border-t-transparent rounded-full animate-spin"></div>
-          <p className="mt-4 text-gray-600">Loading product details...</p>
-        </div>
-      </div>
-    )
-  }
+  
+  const product = getProductBySlug(params.slug)
 
   if (!product) {
     return (
@@ -208,7 +172,7 @@ export default function ProductDetailPageClient() {
 
 function RFQModal({ product, onClose }) {
   const [formData, setFormData] = useState({
-    productId: product._id,
+    productId: product.id,
     productName: product.name,
     name: '',
     company: '',
@@ -226,26 +190,28 @@ function RFQModal({ product, onClose }) {
     e.preventDefault()
     setSubmitting(true)
 
-    try {
-      const res = await fetch('/api/rfq', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      })
-
-      const data = await res.json()
-      if (data.success) {
-        setSuccess(true)
-        setTimeout(() => {
-          onClose()
-        }, 2000)
-      }
-    } catch (error) {
-      console.error('Error submitting RFQ:', error)
-      alert('Failed to submit request. Please try again.')
-    } finally {
+    // Simulate API call delay
+    setTimeout(() => {
+      setSuccess(true)
       setSubmitting(false)
-    }
+      setTimeout(() => {
+        onClose()
+        // Reset form
+        setFormData({
+          productId: product.id,
+          productName: product.name,
+          name: '',
+          company: '',
+          email: '',
+          phone: '',
+          quantity: '',
+          packaging: '',
+          destination: '',
+          message: '',
+        })
+        setSuccess(false)
+      }, 2000)
+    }, 1000)
   }
 
   return (

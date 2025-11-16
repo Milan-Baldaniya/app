@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import AnimatedSection from '@/components/AnimatedSection'
@@ -9,15 +9,14 @@ import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Search, Sparkles, MessageSquare } from 'lucide-react'
+import { getProductsByCategory, getAllCategories } from '@/app/data/products'
 
 export default function ProductsPageClient() {
   const searchParams = useSearchParams()
-  const [products, setProducts] = useState([])
-  const [loading, setLoading] = useState(true)
   const [selectedCategory, setSelectedCategory] = useState('All')
   const [searchQuery, setSearchQuery] = useState('')
 
-  const categories = ['All', 'Spices', 'Grains', 'Oil Seeds', 'Pulses', 'Fresh Vegetables', 'Dry Fruits']
+  const categories = ['All', ...getAllCategories()]
 
   useEffect(() => {
     const category = searchParams.get('category')
@@ -26,34 +25,9 @@ export default function ProductsPageClient() {
     }
   }, [searchParams])
 
-  useEffect(() => {
-    fetchProducts()
+  const products = useMemo(() => {
+    return getProductsByCategory(selectedCategory)
   }, [selectedCategory])
-
-  const fetchProducts = async () => {
-    setLoading(true)
-    try {
-      const url = selectedCategory === 'All' 
-        ? '/api/products' 
-        : `/api/products?category=${encodeURIComponent(selectedCategory)}`
-      
-      const res = await fetch(url)
-      if (!res.ok) {
-        throw new Error(`API error: ${res.status}`)
-      }
-      const data = await res.json()
-      if (data.success && data.products) {
-        setProducts(data.products)
-      } else {
-        setProducts([])
-      }
-    } catch (error) {
-      console.error('Error fetching products:', error)
-      setProducts([])
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const filteredProducts = products.filter(product =>
     product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -145,15 +119,10 @@ export default function ProductsPageClient() {
             </AnimatedSection>
 
             {/* Products Grid */}
-            {loading ? (
-              <div className="text-center py-20">
-                <div className="inline-block w-12 h-12 border-4 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
-                <p className="mt-4 text-gray-600">Loading products...</p>
-              </div>
-            ) : filteredProducts.length > 0 ? (
+            {filteredProducts.length > 0 ? (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredProducts.map((product, idx) => (
-                  <AnimatedSection key={product._id} animation="fade-scale" delay={idx * 50}>
+                  <AnimatedSection key={product.id} animation="fade-scale" delay={idx * 50}>
                     <ProductCard product={product} />
                   </AnimatedSection>
                 ))}

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { ArrowRight, Sparkles } from 'lucide-react'
 
@@ -32,12 +33,20 @@ export default function Hero() {
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden">
       <div className="absolute inset-0 overflow-hidden">
-        <div
-          className="absolute inset-0 scale-110 transition-transform duration-500 ease-out bg-gradient-to-br from-amber-900 via-orange-900 to-amber-900"
-          style={{
-            transform: `translate(${parallaxX}px, ${parallaxY}px)`,
-          }}
-        />
+        <div className="absolute inset-0">
+          <Image
+            src="/HeroBanner.jpg"
+            alt="Hero Banner"
+            fill
+            className="object-cover scale-110 transition-transform duration-500 ease-out"
+            style={{
+              transform: `translate(${parallaxX}px, ${parallaxY}px)`,
+            }}
+            priority
+            quality={90}
+            unoptimized
+          />
+        </div>
         
         <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/50 to-amber-900/60 animate-gradient" />
         

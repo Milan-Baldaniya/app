@@ -18,12 +18,18 @@ export default function ProductDetailPageClient() {
   const fetchProduct = async () => {
     try {
       const res = await fetch(`/api/products/${params.slug}`)
+      if (!res.ok) {
+        throw new Error(`API error: ${res.status}`)
+      }
       const data = await res.json()
-      if (data.success) {
+      if (data.success && data.product) {
         setProduct(data.product)
+      } else {
+        setProduct(null)
       }
     } catch (error) {
       console.error('Error fetching product:', error)
+      setProduct(null)
     } finally {
       setLoading(false)
     }

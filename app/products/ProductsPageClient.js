@@ -2,6 +2,13 @@
 
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
+import Link from 'next/link'
+import AnimatedSection from '@/components/AnimatedSection'
+import { Card, CardContent, CardHeader, CardFooter } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Search, Sparkles, MessageSquare } from 'lucide-react'
 
 export default function ProductsPageClient() {
   const searchParams = useSearchParams()
@@ -12,7 +19,6 @@ export default function ProductsPageClient() {
 
   const categories = ['All', 'Spices', 'Grains', 'Oil Seeds', 'Pulses', 'Fresh Vegetables', 'Dry Fruits']
 
-  // Initialize category from search params
   useEffect(() => {
     const category = searchParams.get('category')
     if (category) {
@@ -32,10 +38,18 @@ export default function ProductsPageClient() {
         : `/api/products?category=${encodeURIComponent(selectedCategory)}`
       
       const res = await fetch(url)
+      if (!res.ok) {
+        throw new Error(`API error: ${res.status}`)
+      }
       const data = await res.json()
-      setProducts(data.products || [])
+      if (data.success && data.products) {
+        setProducts(data.products)
+      } else {
+        setProducts([])
+      }
     } catch (error) {
       console.error('Error fetching products:', error)
+      setProducts([])
     } finally {
       setLoading(false)
     }
@@ -47,93 +61,113 @@ export default function ProductsPageClient() {
   )
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Page Header */}
-      <div className="bg-gradient-to-br from-blue-900 to-blue-800 text-white py-16">
-        <div className="container mx-auto px-4">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Our Products</h1>
-          <p className="text-xl text-gray-200">Explore our wide range of premium agro products</p>
+    <div className="min-h-screen overflow-x-hidden">
+      {/* Hero */}
+      <section className="relative min-h-[40vh] flex items-center overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-amber-900 via-orange-900 to-amber-900" />
+        <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/50 to-amber-900/60 animate-gradient" />
+        <div className="absolute top-20 left-20 w-64 h-64 bg-amber-500/20 rounded-full blur-3xl animate-blob" />
+        
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-24 z-10">
+          <AnimatedSection animation="fade-up">
+            <div className="max-w-4xl mx-auto text-center">
+              <h1 className="text-5xl md:text-7xl font-bold text-white mb-6">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 animate-gradient">
+                  Our Products
+                </span>
+              </h1>
+              <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed">
+                Explore our wide range of premium agro products
+              </p>
+            </div>
+          </AnimatedSection>
         </div>
-      </div>
+      </section>
 
-      <div className="container mx-auto px-4 py-12">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar Filters */}
-          <aside className="lg:w-64 flex-shrink-0">
-            <div className="bg-white rounded-xl shadow-md p-6 sticky top-24">
-              <h2 className="text-xl font-bold text-blue-900 mb-4">Categories</h2>
-              <ul className="space-y-2">
-                {categories.map((category) => (
-                  <li key={category}>
-                    <button
-                      onClick={() => setSelectedCategory(category)}
-                      className={`w-full text-left px-4 py-2 rounded-lg transition ${
-                        selectedCategory === category
-                          ? 'bg-blue-900 text-white'
-                          : 'bg-gray-50 text-gray-700 hover:bg-blue-50'
-                      }`}
-                    >
-                      {category}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </aside>
+          <AnimatedSection animation="slide-left">
+            <aside className="lg:w-64 flex-shrink-0">
+              <Card className="sticky top-24 hover-elevate border-2 border-transparent hover:border-amber-500/30">
+                <CardContent className="pt-6 pb-6">
+                  <h2 className="text-xl font-bold mb-4">
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-orange-500">
+                      Categories
+                    </span>
+                  </h2>
+                  <ul className="space-y-2">
+                    {categories.map((category) => (
+                      <li key={category}>
+                        <button
+                          onClick={() => setSelectedCategory(category)}
+                          className={`w-full text-left px-4 py-2 rounded-lg transition ${
+                            selectedCategory === category
+                              ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg'
+                              : 'bg-gray-50 text-gray-700 hover:bg-amber-50 hover-elevate'
+                          }`}
+                        >
+                          {category}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            </aside>
+          </AnimatedSection>
 
           {/* Products Grid */}
           <main className="flex-1">
             {/* Search Bar */}
-            <div className="mb-8">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search products..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full px-6 py-4 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:outline-none text-lg"
-                />
-                <svg
-                  className="absolute right-4 top-1/2 -translate-y-1/2 w-6 h-6 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            <AnimatedSection animation="fade-up">
+              <div className="mb-8">
+                <div className="relative">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <Input
+                    type="text"
+                    placeholder="Search products..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-12 pr-4 py-6 text-lg border-2 focus:border-amber-500"
                   />
-                </svg>
+                </div>
               </div>
-            </div>
+            </AnimatedSection>
 
             {/* Results Count */}
-            <div className="mb-6 flex items-center justify-between">
-              <p className="text-gray-600">
-                Showing <span className="font-semibold text-blue-900">{filteredProducts.length}</span> products
-              </p>
-            </div>
+            <AnimatedSection animation="fade-up" delay={100}>
+              <div className="mb-6 flex items-center justify-between">
+                <p className="text-gray-600">
+                  Showing <span className="font-semibold bg-gradient-to-r from-amber-600 to-orange-500 text-transparent bg-clip-text">{filteredProducts.length}</span> products
+                </p>
+              </div>
+            </AnimatedSection>
 
             {/* Products Grid */}
             {loading ? (
               <div className="text-center py-20">
-                <div className="inline-block w-12 h-12 border-4 border-blue-900 border-t-transparent rounded-full animate-spin"></div>
+                <div className="inline-block w-12 h-12 border-4 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
                 <p className="mt-4 text-gray-600">Loading products...</p>
               </div>
             ) : filteredProducts.length > 0 ? (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredProducts.map((product) => (
-                  <ProductCard key={product._id} product={product} />
+                {filteredProducts.map((product, idx) => (
+                  <AnimatedSection key={product._id} animation="fade-scale" delay={idx * 50}>
+                    <ProductCard product={product} />
+                  </AnimatedSection>
                 ))}
               </div>
             ) : (
-              <div className="text-center py-20 bg-white rounded-xl">
-                <div className="text-6xl mb-4">🔍</div>
-                <h3 className="text-2xl font-bold text-gray-800 mb-2">No products found</h3>
-                <p className="text-gray-600">Try adjusting your search or filter criteria</p>
-              </div>
+              <AnimatedSection animation="fade-scale">
+                <Card className="text-center py-20">
+                  <CardContent>
+                    <div className="text-6xl mb-4">🔍</div>
+                    <h3 className="text-2xl font-bold mb-2">No products found</h3>
+                    <p className="text-gray-600">Try adjusting your search or filter criteria</p>
+                  </CardContent>
+                </Card>
+              </AnimatedSection>
             )}
           </main>
         </div>
@@ -144,50 +178,58 @@ export default function ProductsPageClient() {
 
 function ProductCard({ product }) {
   return (
-    <a
-      href={`/products/${product.slug}`}
-      className="group bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all border border-gray-100 hover:border-amber-400"
-    >
-      <div className="aspect-square bg-gradient-to-br from-blue-100 to-amber-100 relative overflow-hidden">
-        {product.images?.[0] ? (
-          <img
-            src={product.images[0]}
-            alt={product.name}
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-6xl">
-            {getCategoryIcon(product.category)}
-          </div>
-        )}
-      </div>
-      <div className="p-5">
-        <span className="text-xs font-semibold text-amber-600 bg-amber-50 px-3 py-1 rounded-full">
-          {product.category}
-        </span>
-        <h3 className="text-xl font-bold text-gray-800 mt-3 mb-2 group-hover:text-blue-900 transition">
-          {product.name}
-        </h3>
-        <p className="text-sm text-gray-600 line-clamp-2 mb-4">{product.shortDesc}</p>
-        <div className="space-y-2">
+    <Link href={`/products/${product.slug}`}>
+      <Card className="group overflow-hidden border-2 border-transparent hover:border-amber-500/30 transition-all duration-500 bg-gradient-to-br from-card to-card/80 hover-elevate">
+        <div className="relative aspect-[4/3] overflow-hidden bg-muted">
+          {product.images?.[0] ? (
+            <img
+              src={product.images[0]}
+              alt={product.name}
+              className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+            />
+          ) : (
+            <div className="h-full w-full flex items-center justify-center text-6xl bg-gradient-to-br from-amber-100 to-orange-100">
+              {getCategoryIcon(product.category)}
+            </div>
+          )}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          <Badge
+            variant="secondary"
+            className="absolute top-3 right-3 bg-amber-500/90 text-white border-0 backdrop-blur-sm"
+          >
+            <Sparkles className="h-3 w-3 mr-1" />
+            {product.category}
+          </Badge>
+        </div>
+        <CardHeader className="space-y-2 pb-3">
+          <h3 className="text-xl font-bold line-clamp-1 group-hover:text-primary transition-colors">
+            {product.name}
+          </h3>
+          <p className="text-sm text-muted-foreground line-clamp-2">{product.shortDesc}</p>
+        </CardHeader>
+        <CardContent className="space-y-3 pb-3">
           <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-500">MOQ:</span>
-            <span className="font-semibold text-gray-800">{product.moq}</span>
+            <span className="text-muted-foreground">MOQ:</span>
+            <span className="font-semibold font-mono text-amber-600 dark:text-amber-400">{product.moq}</span>
           </div>
           {product.hsCode && (
             <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-500">HS Code:</span>
-              <span className="font-semibold text-gray-800">{product.hsCode}</span>
+              <span className="text-muted-foreground">HS Code:</span>
+              <span className="font-medium">{product.hsCode}</span>
             </div>
           )}
-        </div>
-        <div className="mt-4 pt-4 border-t border-gray-100">
-          <span className="text-blue-900 font-semibold text-sm group-hover:text-amber-500 transition">
-            View Details & Request Quote →
-          </span>
-        </div>
-      </div>
-    </a>
+        </CardContent>
+        <CardFooter className="pt-3">
+          <Button
+            variant="default"
+            className="w-full group/btn bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 border-0"
+          >
+            <MessageSquare className="mr-2 h-4 w-4 transition-transform group-hover/btn:rotate-12" />
+            View Details
+          </Button>
+        </CardFooter>
+      </Card>
+    </Link>
   )
 }
 
@@ -202,4 +244,3 @@ function getCategoryIcon(category) {
   }
   return icons[category] || '🌿'
 }
-

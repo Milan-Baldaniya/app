@@ -7,12 +7,24 @@ let client
 let db
 
 async function connectToMongo() {
-  if (!client) {
-    client = new MongoClient(process.env.MONGO_URL)
-    await client.connect()
-    db = client.db(process.env.DB_NAME)
+  try {
+    if (!process.env.MONGO_URL) {
+      throw new Error('MONGO_URL environment variable is not set')
+    }
+    if (!process.env.DB_NAME) {
+      throw new Error('DB_NAME environment variable is not set')
+    }
+    
+    if (!client) {
+      client = new MongoClient(process.env.MONGO_URL)
+      await client.connect()
+      db = client.db(process.env.DB_NAME)
+    }
+    return db
+  } catch (error) {
+    console.error('MongoDB connection error:', error)
+    throw error
   }
-  return db
 }
 
 // Helper function to handle CORS
@@ -105,8 +117,16 @@ async function handleRoute(request, { params }) {
     }
 
     // GET /api/products/:slug - Get single product by slug
-    if (route.startsWith('/products/') && method === 'GET') {
+    // Must check this AFTER /products/featured to avoid conflicts
+    if (route.startsWith('/products/') && route !== '/products/featured' && method === 'GET') {
       const slug = path[1]
+      if (!slug) {
+        return handleCORS(NextResponse.json(
+          { success: false, error: 'Product slug is required' }, 
+          { status: 400 }
+        ))
+      }
+      
       const product = await db.collection('products').findOne({ slug })
       
       if (!product) {
@@ -148,8 +168,15 @@ async function handleRoute(request, { params }) {
     }
 
     // PUT /api/products/:id - Update product
-    if (route.startsWith('/products/') && method === 'PUT') {
+    if (route.startsWith('/products/') && route !== '/products/featured' && method === 'PUT') {
       const id = path[1]
+      if (!id) {
+        return handleCORS(NextResponse.json(
+          { success: false, error: 'Product ID is required' }, 
+          { status: 400 }
+        ))
+      }
+      
       const body = await request.json()
       
       const updates = {
@@ -157,19 +184,39 @@ async function handleRoute(request, { params }) {
         updatedAt: new Date()
       }
       
-      await db.collection('products').updateOne(
+      const result = await db.collection('products').updateOne(
         { _id: id },
         { $set: updates }
       )
+      
+      if (result.matchedCount === 0) {
+        return handleCORS(NextResponse.json(
+          { success: false, error: 'Product not found' }, 
+          { status: 404 }
+        ))
+      }
       
       return handleCORS(NextResponse.json({ success: true }))
     }
 
     // DELETE /api/products/:id - Delete product
-    if (route.startsWith('/products/') && method === 'DELETE') {
+    if (route.startsWith('/products/') && route !== '/products/featured' && method === 'DELETE') {
       const id = path[1]
+      if (!id) {
+        return handleCORS(NextResponse.json(
+          { success: false, error: 'Product ID is required' }, 
+          { status: 400 }
+        ))
+      }
       
-      await db.collection('products').deleteOne({ _id: id })
+      const result = await db.collection('products').deleteOne({ _id: id })
+      
+      if (result.deletedCount === 0) {
+        return handleCORS(NextResponse.json(
+          { success: false, error: 'Product not found' }, 
+          { status: 404 }
+        ))
+      }
       
       return handleCORS(NextResponse.json({ success: true }))
     }
@@ -258,8 +305,9 @@ async function handleRoute(request, { params }) {
 
   } catch (error) {
     console.error('API Error:', error)
+    const errorMessage = error.message || "Internal server error"
     return handleCORS(NextResponse.json(
-      { error: "Internal server error" }, 
+      { error: errorMessage, success: false }, 
       { status: 500 }
     ))
   }

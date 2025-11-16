@@ -36,12 +36,12 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen overflow-x-hidden">
       {/* Hero */}
-      <section className="relative min-h-[50vh] flex items-center overflow-hidden">
+      <section className="relative min-h-[40vh] flex items-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-amber-900 via-orange-900 to-amber-900" />
         <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/50 to-amber-900/60 animate-gradient" />
         <div className="absolute top-20 left-20 w-64 h-64 bg-amber-500/20 rounded-full blur-3xl animate-blob" />
         
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-24 z-10">
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 lg:py-20 z-10">
           <AnimatedSection animation="fade-up">
             <div className="max-w-4xl mx-auto text-center">
               <h1 className="text-5xl md:text-7xl font-bold text-white mb-6">
@@ -57,20 +57,20 @@ export default function ContactPage() {
         </div>
       </section>
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid lg:grid-cols-3 gap-12">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
           {/* Contact Information */}
           <AnimatedSection animation="slide-left">
-            <div className="lg:col-span-1">
-              <Card className="sticky top-24 hover-elevate border-2 border-transparent hover:border-amber-500/30">
-                <CardContent className="pt-8 pb-6">
-                  <h2 className="text-2xl font-bold mb-6">
+            <div className="h-full">
+              <Card className="h-full hover-elevate border-2 border-transparent hover:border-amber-500/30 shadow-lg">
+                <CardContent className="pt-8 pb-8 px-6 lg:px-8 h-full flex flex-col">
+                  <h2 className="text-2xl lg:text-3xl font-bold mb-8">
                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-orange-500">
                       Contact Information
                     </span>
                   </h2>
                   
-                  <div className="space-y-6">
+                  <div className="space-y-6 flex-grow">
                     {[
                       {
                         icon: MapPin,
@@ -109,7 +109,7 @@ export default function ContactPage() {
                     ))}
                   </div>
 
-                  <div className="mt-8 pt-8 border-t">
+                  <div className="mt-8 pt-8 border-t border-gray-200">
                     <Link
                       href="https://wa.me/919876543210"
                       target="_blank"
@@ -130,10 +130,10 @@ export default function ContactPage() {
 
           {/* Contact Form */}
           <AnimatedSection animation="slide-right">
-            <div className="lg:col-span-2">
-              <Card className="hover-elevate border-2 border-transparent hover:border-amber-500/30">
-                <CardContent className="pt-8 pb-6">
-                  <h2 className="text-3xl font-bold mb-6">
+            <div className="h-full">
+              <Card className="h-full hover-elevate border-2 border-transparent hover:border-amber-500/30 shadow-lg">
+                <CardContent className="pt-8 pb-8 px-6 lg:px-8 h-full flex flex-col">
+                  <h2 className="text-2xl lg:text-3xl font-bold mb-8">
                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-orange-500">
                       Send Us a Message
                     </span>
@@ -148,79 +148,87 @@ export default function ContactPage() {
                     </AnimatedSection>
                   )}
 
-                  <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="grid md:grid-cols-2 gap-6">
+                  <form onSubmit={handleSubmit} className="flex-grow flex flex-col">
+                    <div className="space-y-6 flex-grow flex flex-col">
+                      <div className="grid md:grid-cols-2 gap-6">
+                        <div>
+                          <label className="block text-sm font-semibold text-gray-700 mb-2">Your Name *</label>
+                          <Input
+                            type="text"
+                            required
+                            value={formData.name}
+                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                            placeholder="John Doe"
+                            className="h-11"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-semibold text-gray-700 mb-2">Company Name</label>
+                          <Input
+                            type="text"
+                            value={formData.company}
+                            onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                            placeholder="Your Company"
+                            className="h-11"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid md:grid-cols-2 gap-6">
+                        <div>
+                          <label className="block text-sm font-semibold text-gray-700 mb-2">Email Address *</label>
+                          <Input
+                            type="email"
+                            required
+                            value={formData.email}
+                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                            placeholder="john@example.com"
+                            className="h-11"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-semibold text-gray-700 mb-2">Phone Number *</label>
+                          <Input
+                            type="tel"
+                            required
+                            value={formData.phone}
+                            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                            placeholder="+1 234 567 8900"
+                            className="h-11"
+                          />
+                        </div>
+                      </div>
+
                       <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Your Name *</label>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">Subject *</label>
                         <Input
                           type="text"
                           required
-                          value={formData.name}
-                          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                          placeholder="John Doe"
+                          value={formData.subject}
+                          onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                          placeholder="What is this regarding?"
+                          className="h-11"
                         />
                       </div>
-                      <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Company Name</label>
-                        <Input
-                          type="text"
-                          value={formData.company}
-                          onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                          placeholder="Your Company"
-                        />
-                      </div>
-                    </div>
 
-                    <div className="grid md:grid-cols-2 gap-6">
-                      <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Email Address *</label>
-                        <Input
-                          type="email"
+                      <div className="flex-grow">
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">Message *</label>
+                        <Textarea
+                          rows="6"
                           required
-                          value={formData.email}
-                          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                          placeholder="john@example.com"
+                          value={formData.message}
+                          onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                          placeholder="Tell us more about your requirements..."
+                          className="resize-none h-full"
                         />
                       </div>
-                      <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Phone Number *</label>
-                        <Input
-                          type="tel"
-                          required
-                          value={formData.phone}
-                          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                          placeholder="+1 234 567 8900"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">Subject *</label>
-                      <Input
-                        type="text"
-                        required
-                        value={formData.subject}
-                        onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                        placeholder="What is this regarding?"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">Message *</label>
-                      <Textarea
-                        rows="6"
-                        required
-                        value={formData.message}
-                        onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                        placeholder="Tell us more about your requirements..."
-                      />
                     </div>
 
                     <Button
                       type="submit"
                       disabled={submitting}
                       size="lg"
-                      className="w-full text-lg h-14 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 border-0 disabled:bg-gray-400"
+                      className="w-full text-lg h-14 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 border-0 disabled:bg-gray-400 mt-6"
                     >
                       {submitting ? 'Sending...' : 'Send Message'}
                     </Button>
@@ -233,16 +241,17 @@ export default function ContactPage() {
 
         {/* Map */}
         <AnimatedSection animation="fade-up" delay={300}>
-          <div className="mt-12">
-            <Card className="overflow-hidden">
+          <div className="mt-12 lg:mt-16">
+            <Card className="overflow-hidden shadow-lg">
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d235013.74842465583!2d72.43929984349378!3d23.02047408722869!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395e848aba5bd449%3A0x4fcedd11614f6516!2sAhmedabad%2C%20Gujarat!5e0!3m2!1sen!2sin!4v1234567890"
                 width="100%"
-                height="400"
+                height="450"
                 style={{ border: 0 }}
                 allowFullScreen=""
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
+                className="w-full"
               />
             </Card>
           </div>

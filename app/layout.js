@@ -1,9 +1,14 @@
 import './globals.css'
-import { Inter } from 'next/font/google'
+import { Inter, Playfair_Display } from 'next/font/google'
 import Header from './components/Header'
 import Footer from './components/Footer'
 
 const inter = Inter({ subsets: ['latin'] })
+const playfair = Playfair_Display({ 
+  subsets: ['latin'],
+  variable: '--font-playfair',
+  weight: ['400', '500', '600', '700', '800', '900']
+})
 
 export const metadata = {
   title: 'Krushi World Export - Premium Indian Agro Products Exporter',
@@ -19,7 +24,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={`${inter.className} ${playfair.variable}`}>
         <Header />
         <main className="min-h-screen overflow-x-hidden">{children}</main>
         <Footer />

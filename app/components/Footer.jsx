@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Facebook, Twitter, Linkedin, Instagram, Mail, Phone, MapPin } from 'lucide-react'
@@ -12,8 +13,15 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <div className="flex h-10 w-10 items-center justify-center rounded-md bg-primary">
-                <span className="text-lg font-bold text-primary-foreground">KW</span>
+              <div className="relative h-12 w-12 flex-shrink-0">
+                <Image
+                  src="/logo.png"
+                  alt="Krushi World Export Logo"
+                  fill
+                  className="object-contain"
+                  sizes="48px"
+                  unoptimized
+                />
               </div>
               <div className="flex flex-col">
                 <span className="text-sm font-bold leading-tight">Krushi World Export</span>

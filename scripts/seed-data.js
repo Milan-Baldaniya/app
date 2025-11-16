@@ -1,6 +1,9 @@
-require('dotenv').config({ path: require('path').join(__dirname, '../.env') });
 const { MongoClient } = require('mongodb');
 const { v4: uuidv4 } = require('uuid');
+
+// Get env vars or use defaults
+const MONGO_URL = process.env.MONGO_URL || 'mongodb://localhost:27017';
+const DB_NAME = process.env.DB_NAME || 'krushi_world_db';
 
 const sampleProducts = [
   {

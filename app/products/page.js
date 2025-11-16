@@ -1,6 +1,9 @@
 import { Suspense } from 'react'
 import ProductsPageClient from './ProductsPageClient'
 
+// Force dynamic rendering since we use useSearchParams()
+export const dynamic = 'force-dynamic'
+
 export default function ProductsPage() {
   return (
     <Suspense fallback={

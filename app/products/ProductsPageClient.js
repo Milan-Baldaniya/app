@@ -7,10 +7,18 @@ export default function ProductsPageClient() {
   const searchParams = useSearchParams()
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
-  const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || 'All')
+  const [selectedCategory, setSelectedCategory] = useState('All')
   const [searchQuery, setSearchQuery] = useState('')
 
   const categories = ['All', 'Spices', 'Grains', 'Oil Seeds', 'Pulses', 'Fresh Vegetables', 'Dry Fruits']
+
+  // Initialize category from search params
+  useEffect(() => {
+    const category = searchParams.get('category')
+    if (category) {
+      setSelectedCategory(category)
+    }
+  }, [searchParams])
 
   useEffect(() => {
     fetchProducts()

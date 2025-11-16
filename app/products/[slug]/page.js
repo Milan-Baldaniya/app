@@ -1,8 +1,11 @@
 import { Suspense } from 'react'
 import ProductDetailPageClient from './ProductDetailPageClient'
 
+// Force dynamic rendering since we use useParams()
+export const dynamic = 'force-dynamic'
+
 export default function ProductDetailPage() {
-  return (
+    return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">

@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { ArrowRight, Sparkles } from 'lucide-react'
+import { BackgroundBeamsWithCollision } from '@/components/ui/background-beams-with-collision'
 
 export default function Hero() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
@@ -68,6 +69,13 @@ export default function Hero() {
             }}
           />
         ))}
+      </div>
+
+      {/* Background Beams Animation */}
+      <div className="absolute inset-0 pointer-events-none z-[5]">
+        <BackgroundBeamsWithCollision className="!bg-transparent h-full min-h-screen">
+          <div className="absolute inset-0" />
+        </BackgroundBeamsWithCollision>
       </div>
       
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-32 z-10">

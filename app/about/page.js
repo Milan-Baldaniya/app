@@ -33,9 +33,9 @@ export default function AboutPage() {
       </section>
 
       {/* Company Story */}
-      <section className="py-24 md:py-32 bg-white">
+      <section className="py-16 sm:py-20 md:py-24 lg:py-32 bg-white overflow-hidden">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
             <AnimatedSection animation="slide-left">
               <div>
                 <h2 className="text-4xl md:text-5xl font-bold mb-6">
@@ -61,7 +61,7 @@ export default function AboutPage() {
               </div>
             </AnimatedSection>
             <AnimatedSection animation="slide-right">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3 sm:gap-4">
                 {[
                   { value: '50+', label: 'Countries Served', color: 'from-blue-500 to-blue-600' },
                   { value: '15+', label: 'Years Experience', color: 'from-amber-500 to-orange-500' },
@@ -69,12 +69,12 @@ export default function AboutPage() {
                   { value: '100+', label: 'Products', color: 'from-purple-500 to-pink-500' },
                 ].map((stat, idx) => (
                   <AnimatedSection key={idx} animation="fade-scale" delay={idx * 100}>
-                    <Card className="text-center hover-elevate border-2 border-transparent hover:border-amber-500/30">
-                      <CardContent className="pt-8 pb-6">
-                        <div className={`text-5xl font-bold mb-2 bg-gradient-to-r ${stat.color} text-transparent bg-clip-text`}>
+                    <Card className="text-center hover-elevate border-2 border-transparent hover:border-amber-500/30 h-full">
+                      <CardContent className="pt-4 pb-4 sm:pt-6 sm:pb-5 md:pt-8 md:pb-6 px-2 sm:px-4">
+                        <div className={`text-3xl sm:text-4xl md:text-5xl font-bold mb-1 sm:mb-2 bg-gradient-to-r ${stat.color} text-transparent bg-clip-text leading-tight`}>
                           {stat.value}
                         </div>
-                        <p className="text-gray-700 font-semibold">{stat.label}</p>
+                        <p className="text-gray-700 font-semibold text-xs sm:text-sm md:text-base leading-tight">{stat.label}</p>
                       </CardContent>
                     </Card>
                   </AnimatedSection>

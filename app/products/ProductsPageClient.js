@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
+import { motion } from 'framer-motion'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import AnimatedSection from '@/components/AnimatedSection'
@@ -8,22 +9,61 @@ import { Card, CardContent, CardHeader, CardFooter } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Search, Sparkles, MessageSquare } from 'lucide-react'
+import { Search, Sparkles, MessageSquare, LayoutGrid, Flame, Wheat, Sunflower, Bean, Carrot, Apple } from 'lucide-react'
 import { getProductsByCategory, getAllCategories } from '@/app/data/products'
+import { Sidebar, SidebarBody, SidebarLink } from '@/components/ui/sidebar'
+import { cn } from '@/lib/utils'
 
 export default function ProductsPageClient() {
   const searchParams = useSearchParams()
   const [selectedCategory, setSelectedCategory] = useState('All')
   const [searchQuery, setSearchQuery] = useState('')
+  const [sidebarOpen, setSidebarOpen] = useState(true) // Start expanded on desktop
 
-  const categories = ['All', ...getAllCategories()]
+  const categories = useMemo(() => ['All', ...getAllCategories()], [])
+
+  // Map categories to icons
+  const categoryIconMap = {
+    'All': LayoutGrid,
+    'Spices': Flame,
+    'Grains': Wheat,
+    'Oil Seeds': Sunflower,
+    'Pulses': Bean,
+    'Fresh Vegetables': Carrot,
+    'Dry Fruits': Apple,
+  }
+
+  // Create sidebar links array
+  const sidebarLinks = useMemo(() => categories.map((category, idx) => {
+    const Icon = categoryIconMap[category] || LayoutGrid
+    const isSelected = selectedCategory === category
+    return {
+      label: category,
+      href: '#',
+      icon: React.createElement(Icon, {
+        className: cn(
+          "h-5 w-5 flex-shrink-0",
+          isSelected 
+            ? "text-white" 
+            : "text-neutral-700 dark:text-neutral-200"
+        ),
+      }),
+    }
+  }), [categories, selectedCategory])
 
   useEffect(() => {
     const category = searchParams.get('category')
     if (category) {
       setSelectedCategory(category)
+    } else {
+      setSelectedCategory('All')
     }
   }, [searchParams])
+
+  const handleCategoryClick = (category) => {
+    setSelectedCategory(category)
+    setSidebarOpen(false) // Close mobile sidebar after selection
+  }
 
   const products = useMemo(() => {
     return getProductsByCategory(selectedCategory)
@@ -59,43 +99,55 @@ export default function ProductsPageClient() {
       </section>
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar Filters */}
-          <AnimatedSection animation="slide-left">
-            <aside className="lg:w-64 flex-shrink-0">
-              <Card className="sticky top-24 hover-elevate border-2 border-transparent hover:border-amber-500/30">
-                <CardContent className="pt-6 pb-6">
-                  <h2 className="text-xl font-bold mb-4">
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-orange-500">
-                      Categories
-                    </span>
-                  </h2>
-                  <ul className="space-y-2">
-                    {categories.map((category) => (
-                      <li key={category}>
-                        <button
-                          onClick={() => setSelectedCategory(category)}
-                          className={`w-full text-left px-4 py-2 rounded-lg transition ${
-                            selectedCategory === category
-                              ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg'
-                              : 'bg-gray-50 text-gray-700 hover:bg-amber-50 hover-elevate'
-                          }`}
-                        >
-                          {category}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
-            </aside>
-          </AnimatedSection>
+        <div className="flex flex-col md:flex-row gap-8 items-start">
+          {/* Sidebar for Categories */}
+          <Sidebar open={sidebarOpen} setOpen={setSidebarOpen}>
+            <SidebarBody className="justify-start gap-4" title="Categories">
+              <div className="flex flex-col flex-1 min-h-0 w-full">
+                {/* Categories heading - visible on mobile, animated on desktop */}
+                <h2 className="text-xl font-bold mb-4 md:block hidden">
+                  <motion.span 
+                    className="text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-orange-500"
+                    animate={{
+                      opacity: sidebarOpen ? 1 : 0,
+                      display: sidebarOpen ? "inline-block" : "none",
+                    }}
+                    style={{ whiteSpace: "nowrap" }}
+                  >
+                    Categories
+                  </motion.span>
+                </h2>
+                {/* Mobile-only Categories heading */}
+                <h2 className="text-2xl font-bold mb-6 block md:hidden">
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-orange-500">
+                    Categories
+                  </span>
+                </h2>
+                <div className="flex flex-col gap-2 w-full">
+                  {sidebarLinks.map((link, idx) => (
+                    <SidebarLink
+                      key={idx}
+                      link={link}
+                      onClick={() => handleCategoryClick(categories[idx])}
+                      className={cn(
+                        "py-2 rounded-lg transition-colors",
+                        sidebarOpen ? "px-3" : "px-2",
+                        selectedCategory === categories[idx]
+                          ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white"
+                          : "hover:bg-amber-50 dark:hover:bg-neutral-700"
+                      )}
+                    />
+                  ))}
+                </div>
+              </div>
+            </SidebarBody>
+          </Sidebar>
 
           {/* Products Grid */}
           <main className="flex-1">
             {/* Search Bar */}
             <AnimatedSection animation="fade-up">
-              <div className="mb-8">
+              <div className="mb-8 mt-0 lg:mt-0">
                 <div className="relative">
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                   <Input

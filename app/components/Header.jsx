@@ -39,19 +39,19 @@ export default function Header() {
       }`}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between gap-4">
+        <div className="relative flex h-16 items-center justify-between gap-4">
           <Link 
             href="/" 
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 sm:flex"
           >
-            <div className="relative h-[64px] w-[64px] flex-shrink-0">
+            <div className="relative h-[48px] w-[48px] sm:h-[64px] sm:w-[64px] flex-shrink-0">
               <Image
                 src="/logo.png"
                 alt="Krushi World Export Logo"
                 fill
                 className="object-contain"
                 priority
-                sizes="64px"
+                sizes="(max-width: 640px) 48px, 64px"
                 unoptimized
               />
             </div>
@@ -60,6 +60,16 @@ export default function Header() {
                 Krushi World Export
               </span>
             </div>
+          </Link>
+
+          {/* Mobile Company Name - Centered */}
+          <Link 
+            href="/" 
+            className="absolute left-1/2 transform -translate-x-1/2 flex justify-center sm:hidden"
+          >
+            <span className="text-lg font-bold leading-tight tracking-wide" style={{ fontFamily: 'var(--font-playfair), "Georgia", "Times New Roman", serif' }}>
+              Krushi World Export
+            </span>
           </Link>
 
           <nav className="hidden items-center gap-2 lg:flex">

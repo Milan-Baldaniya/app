@@ -31,12 +31,13 @@ export default function FeaturedProducts() {
           </div>
         </AnimatedSection>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
           {featuredProducts.slice(0, 3).map((product, index) => (
             <AnimatedSection
               key={product.id}
               animation="fade-scale"
               delay={index * 150}
+              className="h-full"
             >
               <ProductCard product={product} />
             </AnimatedSection>
@@ -105,7 +106,7 @@ function ProductCard({ product }) {
 
   return (
     <div
-      className="relative"
+      className="relative h-full"
       style={{ perspective: '1400px' }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
@@ -113,7 +114,7 @@ function ProductCard({ product }) {
     >
       <Card
         ref={cardRef}
-        className="group relative overflow-hidden border-2 border-transparent hover:border-amber-500/30 transition-all duration-500 bg-gradient-to-br from-card to-card/80 will-change-transform glass-tilt-card"
+        className="group relative overflow-hidden border-2 border-transparent hover:border-amber-500/30 transition-all duration-500 bg-gradient-to-br from-card to-card/80 will-change-transform glass-tilt-card h-full min-h-[520px] flex flex-col"
         style={{ transformStyle: 'preserve-3d', transition: 'transform 0.25s ease-out' }}
       >
         <div className="pointer-events-none absolute inset-0 glass-tilt-glow" aria-hidden="true" />
@@ -133,7 +134,7 @@ function ProductCard({ product }) {
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
           <Badge
             variant="secondary"
-            className="absolute top-3 right-3 bg-amber-500/90 text-white border-0 backdrop-blur-sm"
+            className="absolute top-3 right-3 bg-amber-500/90 text-white border-0 backdrop-blur-sm max-w-[85%] truncate"
           >
             <Sparkles className="h-3 w-3 mr-1" />
             <span className="text-xs font-semibold">{badgeLabel}</span>
@@ -145,7 +146,7 @@ function ProductCard({ product }) {
           </h3>
           <p className="text-sm text-muted-foreground line-clamp-2">{product.shortDesc}</p>
         </CardHeader>
-        <CardContent className="space-y-3 pb-3">
+        <CardContent className="space-y-3 pb-3 flex-grow">
           <div className="flex items-center justify-between text-sm">
             <span className="text-muted-foreground">Minimum Order:</span>
             <span className="font-semibold font-mono text-amber-600 dark:text-amber-400">{product.moq || 'N/A'}</span>
@@ -155,7 +156,7 @@ function ProductCard({ product }) {
             <span className="font-medium">{product.origin || 'India'}</span>
           </div>
         </CardContent>
-        <CardFooter className="pt-3">
+        <CardFooter className="pt-3 mt-auto">
           <Link href={`/products/${product.slug}`} className="w-full">
             <Button
               variant="default"

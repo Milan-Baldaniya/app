@@ -81,7 +81,7 @@ export default function ProductDetailPageClient() {
                 {product.hsCode && (
                   <div className="bg-amber-50 rounded-lg p-4">
                     <p className="text-sm text-gray-600 mb-1">HS Code</p>
-                    <p className="text-xl font-bold text-amber-700">{product.hsCode}</p>
+                    <p className="text-base sm:text-xl font-bold text-amber-700 break-words">{product.hsCode}</p>
                   </div>
                 )}
                 {product.origin && (
@@ -92,8 +92,17 @@ export default function ProductDetailPageClient() {
                 )}
                 {product.grade && product.grade.length > 0 && (
                   <div className="bg-purple-50 rounded-lg p-4">
-                    <p className="text-sm text-gray-600 mb-1">Available Grades</p>
-                    <p className="text-lg font-bold text-purple-700">{product.grade.join(', ')}</p>
+                    <p className="text-sm text-gray-600 mb-2">Available Grades</p>
+                    <div className="flex flex-wrap gap-2">
+                      {product.grade.map((gradeOption, idx) => (
+                        <span
+                          key={`${gradeOption}-${idx}`}
+                          className="text-sm font-semibold text-purple-800 bg-white/70 border border-purple-200 px-3 py-1 rounded-full"
+                        >
+                          {gradeOption}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>

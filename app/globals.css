@@ -250,4 +250,41 @@ code {
   .dark .hover-elevate:hover::after {
     background-color: rgba(255, 255, 255, 0.04);
   }
+
+  @keyframes glassPulse {
+    0% {
+      opacity: 0.15;
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+    50% {
+      opacity: 0.45;
+      transform: translate3d(6%, -6%, 0) scale(1.05);
+    }
+    100% {
+      opacity: 0.15;
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+  }
+
+  .glass-tilt-glow {
+    background: radial-gradient(circle at 20% 20%, rgba(255, 237, 213, 0.45), transparent 60%),
+      radial-gradient(circle at 80% 0%, rgba(253, 203, 158, 0.35), transparent 55%),
+      linear-gradient(120deg, rgba(253, 213, 156, 0.18), rgba(255, 178, 120, 0.08));
+    mix-blend-mode: screen;
+    opacity: 0;
+    animation: glassPulse 4s ease-in-out infinite;
+    animation-play-state: paused;
+    transition: opacity 0.35s ease;
+  }
+
+  .group:hover .glass-tilt-glow {
+    opacity: 0.5;
+    animation-play-state: running;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .glass-tilt-glow {
+      animation: none;
+    }
+  }
 }

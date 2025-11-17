@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
@@ -198,58 +198,112 @@ export default function ProductsPageClient() {
 }
 
 function ProductCard({ product }) {
+  const cardRef = useRef(null)
+  const frameRef = useRef(null)
+
+  const resetTilt = () => {
+    const card = cardRef.current
+    if (!card) return
+    card.style.transform = 'rotateX(0deg) rotateY(0deg)'
+    card.style.boxShadow = ''
+  }
+
+  const handleMouseMove = (event) => {
+    const card = cardRef.current
+    if (!card) return
+    const rect = card.getBoundingClientRect()
+    const x = event.clientX - rect.left
+    const y = event.clientY - rect.top
+    const centerX = rect.width / 2
+    const centerY = rect.height / 2
+    const rotateMax = 10
+
+    const rotateY = ((x - centerX) / centerX) * rotateMax
+    const rotateX = -((y - centerY) / centerY) * rotateMax
+
+    if (frameRef.current) {
+      cancelAnimationFrame(frameRef.current)
+    }
+
+    frameRef.current = requestAnimationFrame(() => {
+      card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`
+      card.style.boxShadow = `0 25px 65px rgba(15, 23, 42, 0.25)`
+    })
+  }
+
+  const handleMouseLeave = () => {
+    if (frameRef.current) {
+      cancelAnimationFrame(frameRef.current)
+    }
+    resetTilt()
+  }
+
   return (
-    <Link href={`/products/${product.slug}`}>
-      <Card className="group overflow-hidden border-2 border-transparent hover:border-amber-500/30 transition-all duration-500 bg-gradient-to-br from-card to-card/80 hover-elevate">
-        <div className="relative aspect-[4/3] overflow-hidden bg-muted">
-          {product.images?.[0] ? (
-            <img
-              src={product.images[0]}
-              alt={product.name}
-              className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-            />
-          ) : (
-            <div className="h-full w-full flex items-center justify-center text-6xl bg-gradient-to-br from-amber-100 to-orange-100">
-              {getCategoryIcon(product.category)}
-            </div>
-          )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-          <Badge
-            variant="secondary"
-            className="absolute top-3 right-3 bg-amber-500/90 text-white border-0 backdrop-blur-sm"
-          >
-            <Sparkles className="h-3 w-3 mr-1" />
-            {product.category}
-          </Badge>
-        </div>
-        <CardHeader className="space-y-2 pb-3">
-          <h3 className="text-xl font-bold line-clamp-1 group-hover:text-primary transition-colors">
-            {product.name}
-          </h3>
-          <p className="text-sm text-muted-foreground line-clamp-2">{product.shortDesc}</p>
-        </CardHeader>
-        <CardContent className="space-y-3 pb-3">
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">MOQ:</span>
-            <span className="font-semibold font-mono text-amber-600 dark:text-amber-400">{product.moq}</span>
+    <Link href={`/products/${product.slug}`} className="block">
+      <div
+        className="relative"
+        style={{ perspective: '1400px' }}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        onMouseEnter={handleMouseMove}
+      >
+        <Card
+          ref={cardRef}
+          className="group relative overflow-hidden border-2 border-transparent hover:border-amber-500/30 transition-all duration-500 bg-gradient-to-br from-card to-card/80 will-change-transform glass-tilt-card"
+          style={{ transformStyle: 'preserve-3d', transition: 'transform 0.25s ease-out' }}
+        >
+          <div className="pointer-events-none absolute inset-0 glass-tilt-glow" aria-hidden="true" />
+
+          <div className="relative aspect-[4/3] overflow-hidden bg-muted">
+            {product.images?.[0] ? (
+              <img
+                src={product.images[0]}
+                alt={product.name}
+                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+              />
+            ) : (
+              <div className="h-full w-full flex items-center justify-center text-6xl bg-gradient-to-br from-amber-100 to-orange-100">
+                {getCategoryIcon(product.category)}
+              </div>
+            )}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <Badge
+              variant="secondary"
+              className="absolute top-3 right-3 bg-amber-500/90 text-white border-0 backdrop-blur-sm"
+            >
+              <Sparkles className="h-3 w-3 mr-1" />
+              {product.category}
+            </Badge>
           </div>
-          {product.hsCode && (
+          <CardHeader className="space-y-2 pb-3">
+            <h3 className="text-xl font-bold line-clamp-1 group-hover:text-primary transition-colors">
+              {product.name}
+            </h3>
+            <p className="text-sm text-muted-foreground line-clamp-2">{product.shortDesc}</p>
+          </CardHeader>
+          <CardContent className="space-y-3 pb-3">
             <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">HS Code:</span>
-              <span className="font-medium">{product.hsCode}</span>
+              <span className="text-muted-foreground">MOQ:</span>
+              <span className="font-semibold font-mono text-amber-600 dark:text-amber-400">{product.moq}</span>
             </div>
-          )}
-        </CardContent>
-        <CardFooter className="pt-3">
-          <Button
-            variant="default"
-            className="w-full group/btn bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 border-0"
-          >
-            <MessageSquare className="mr-2 h-4 w-4 transition-transform group-hover/btn:rotate-12" />
-            View Details
-          </Button>
-        </CardFooter>
-      </Card>
+            {product.hsCode && (
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">HS Code:</span>
+                <span className="font-medium">{product.hsCode}</span>
+              </div>
+            )}
+          </CardContent>
+          <CardFooter className="pt-3">
+            <Button
+              variant="default"
+              className="w-full group/btn bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 border-0"
+            >
+              <MessageSquare className="mr-2 h-4 w-4 transition-transform group-hover/btn:rotate-12" />
+              View Details
+            </Button>
+          </CardFooter>
+        </Card>
+      </div>
     </Link>
   )
 }

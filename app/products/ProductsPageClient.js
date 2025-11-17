@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardFooter } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Search, Sparkles, MessageSquare, LayoutGrid, Flame, Wheat, Sunflower, Bean, Carrot, Apple } from 'lucide-react'
+import { Search, Sparkles, MessageSquare, LayoutGrid, Flame, Wheat, Sun, Sprout, Carrot, Apple } from 'lucide-react'
 import { getProductsByCategory, getAllCategories } from '@/app/data/products'
 import { Sidebar, SidebarBody, SidebarLink } from '@/components/ui/sidebar'
 import { cn } from '@/lib/utils'
@@ -27,8 +27,8 @@ export default function ProductsPageClient() {
     'All': LayoutGrid,
     'Spices': Flame,
     'Grains': Wheat,
-    'Oil Seeds': Sunflower,
-    'Pulses': Bean,
+    'Oil Seeds': Sun,
+    'Pulses': Sprout,
     'Fresh Vegetables': Carrot,
     'Dry Fruits': Apple,
   }

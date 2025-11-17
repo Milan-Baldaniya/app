@@ -64,6 +64,7 @@ export default function FeaturedProducts() {
 function ProductCard({ product }) {
   const cardRef = useRef(null)
   const frameRef = useRef(null)
+  const badgeLabel = Array.isArray(product.grade) ? product.grade[0] : product.grade || product.category
 
   const resetTilt = () => {
     const card = cardRef.current
@@ -135,7 +136,7 @@ function ProductCard({ product }) {
             className="absolute top-3 right-3 bg-amber-500/90 text-white border-0 backdrop-blur-sm"
           >
             <Sparkles className="h-3 w-3 mr-1" />
-            {product.grade || product.category}
+            <span className="text-xs font-semibold">{badgeLabel}</span>
           </Badge>
         </div>
         <CardHeader className="space-y-2 pb-3">

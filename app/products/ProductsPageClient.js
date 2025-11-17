@@ -172,9 +172,14 @@ export default function ProductsPageClient() {
 
             {/* Products Grid */}
             {filteredProducts.length > 0 ? (
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
                 {filteredProducts.map((product, idx) => (
-                  <AnimatedSection key={product.id} animation="fade-scale" delay={idx * 50}>
+                  <AnimatedSection
+                    key={product.id}
+                    animation="fade-scale"
+                    delay={idx * 50}
+                    className="h-full"
+                  >
                     <ProductCard product={product} />
                   </AnimatedSection>
                 ))}
@@ -239,7 +244,7 @@ function ProductCard({ product }) {
   }
 
   return (
-    <Link href={`/products/${product.slug}`} className="block">
+    <Link href={`/products/${product.slug}`} className="block h-full">
       <div
         className="relative"
         style={{ perspective: '1400px' }}
@@ -249,7 +254,7 @@ function ProductCard({ product }) {
       >
         <Card
           ref={cardRef}
-          className="group relative overflow-hidden border-2 border-transparent hover:border-amber-500/30 transition-all duration-500 bg-gradient-to-br from-card to-card/80 will-change-transform glass-tilt-card"
+          className="group relative overflow-hidden border-2 border-transparent hover:border-amber-500/30 transition-all duration-500 bg-gradient-to-br from-card to-card/80 will-change-transform glass-tilt-card h-full min-h-[520px] flex flex-col"
           style={{ transformStyle: 'preserve-3d', transition: 'transform 0.25s ease-out' }}
         >
           <div className="pointer-events-none absolute inset-0 glass-tilt-glow" aria-hidden="true" />
@@ -281,7 +286,7 @@ function ProductCard({ product }) {
             </h3>
             <p className="text-sm text-muted-foreground line-clamp-2">{product.shortDesc}</p>
           </CardHeader>
-          <CardContent className="space-y-3 pb-3">
+          <CardContent className="space-y-3 pb-3 flex-grow">
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">MOQ:</span>
               <span className="font-semibold font-mono text-amber-600 dark:text-amber-400">{product.moq}</span>
@@ -293,7 +298,7 @@ function ProductCard({ product }) {
               </div>
             )}
           </CardContent>
-          <CardFooter className="pt-3">
+          <CardFooter className="pt-3 mt-auto">
             <Button
               variant="default"
               className="w-full group/btn bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 border-0"

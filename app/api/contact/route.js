@@ -102,6 +102,19 @@ const buildUserEmail = ({ name, subject, message }) => {
 
 export async function POST(request) {
   try {
+    const requiredEnvVars = ['SMTP_HOST', 'SMTP_PORT', 'SMTP_USER', 'SMTP_PASS']
+    const missingEnvVars = requiredEnvVars.filter((key) => !process.env[key])
+
+    if (missingEnvVars.length) {
+      return NextResponse.json(
+        {
+          error: 'Email service is not configured.',
+          details: `Missing environment variables: ${missingEnvVars.join(', ')}`,
+        },
+        { status: 500 }
+      )
+    }
+
     const body = await request.json()
     const { name, email, phone, company, subject, message } = body
 
@@ -113,10 +126,13 @@ export async function POST(request) {
       )
     }
 
+    const port = parseInt(process.env.SMTP_PORT || '587')
+
     const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST || 'smtp.gmail.com',
-      port: parseInt(process.env.SMTP_PORT || '587'),
-      secure: false,
+      host: process.env.SMTP_HOST,
+      port,
+      // Use secure connection for port 465 or when explicitly enabled
+      secure: process.env.SMTP_SECURE === 'true' || port === 465,
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,

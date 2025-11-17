@@ -174,14 +174,13 @@ export default function ProductsPageClient() {
             {filteredProducts.length > 0 ? (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
                 {filteredProducts.map((product, idx) => (
-                  <AnimatedSection
+                  <div
                     key={product.id}
-                    animation="fade-scale"
-                    delay={idx * 50}
-                    className="h-full"
+                    className="animate-fade-in-up h-full"
+                    style={{ animationDelay: `${idx * 40}ms` }}
                   >
                     <ProductCard product={product} />
-                  </AnimatedSection>
+                  </div>
                 ))}
               </div>
             ) : (

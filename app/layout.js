@@ -2,6 +2,7 @@ import './globals.css'
 import { Inter, Playfair_Display } from 'next/font/google'
 import Header from './components/Header'
 import Footer from './components/Footer'
+import CustomCursor from './components/CustomCursor'
 
 const inter = Inter({ subsets: ['latin'] })
 const playfair = Playfair_Display({ 
@@ -25,6 +26,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${inter.className} ${playfair.variable}`}>
+        <CustomCursor />
         <Header />
         <main className="min-h-screen overflow-x-hidden">{children}</main>
         <Footer />

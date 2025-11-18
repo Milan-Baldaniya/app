@@ -155,6 +155,26 @@ export default function ProductDetailPageClient() {
                 </div>
               )}
 
+              {/* Product Benefits */}
+              {product.productBenefits && (
+                <div className="mb-8">
+                  <h2 className="text-2xl font-bold text-blue-900 mb-3">Product Benefits</h2>
+                  <div className="bg-amber-50 rounded-xl p-6 border-l-4 border-amber-500">
+                    <p className="text-gray-700 leading-relaxed">{product.productBenefits}</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Health Benefits */}
+              {product.healthBenefits && (
+                <div className="mb-8">
+                  <h2 className="text-2xl font-bold text-blue-900 mb-3">Health Benefits</h2>
+                  <div className="bg-green-50 rounded-xl p-6 border-l-4 border-green-500">
+                    <p className="text-gray-700 leading-relaxed">{product.healthBenefits}</p>
+                  </div>
+                </div>
+              )}
+
               {/* Packaging */}
               {product.packaging && product.packaging.length > 0 && (
                 <div className="mb-8">
@@ -362,7 +382,12 @@ function getCategoryIcon(category) {
     'Oil Seeds': '🌻',
     'Pulses': '🫘',
     'Fresh Vegetables': '🥕',
+    'Fresh Fruits': '🍎',
     'Dry Fruits': '🥜',
+    'Honey Products': '🍯',
+    'Dairy Products': '🥛',
+    'Ayurvedic Products': '🌿',
+    'Dehydrated Products': '📦',
   }
   return icons[category] || '🌿'
 }

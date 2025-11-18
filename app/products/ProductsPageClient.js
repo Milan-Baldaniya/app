@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardFooter } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Search, Sparkles, MessageSquare, LayoutGrid, Flame, Wheat, Sun, Sprout, Carrot, Apple } from 'lucide-react'
+import { Search, Sparkles, MessageSquare, LayoutGrid, Flame, Wheat, Sun, Sprout, Carrot, Apple, Droplet, Milk, Leaf, Package } from 'lucide-react'
 import { getProductsByCategory, getAllCategories } from '@/app/data/products'
 import { Sidebar, SidebarBody, SidebarLink } from '@/components/ui/sidebar'
 import { cn } from '@/lib/utils'
@@ -30,7 +30,12 @@ export default function ProductsPageClient() {
     'Oil Seeds': Sun,
     'Pulses': Sprout,
     'Fresh Vegetables': Carrot,
+    'Fresh Fruits': Apple,
     'Dry Fruits': Apple,
+    'Honey Products': Droplet,
+    'Dairy Products': Milk,
+    'Ayurvedic Products': Leaf,
+    'Dehydrated Products': Package,
   }
 
   // Create sidebar links array
@@ -320,7 +325,12 @@ function getCategoryIcon(category) {
     'Oil Seeds': '🌻',
     'Pulses': '🫘',
     'Fresh Vegetables': '🥕',
+    'Fresh Fruits': '🍎',
     'Dry Fruits': '🥜',
+    'Honey Products': '🍯',
+    'Dairy Products': '🥛',
+    'Ayurvedic Products': '🌿',
+    'Dehydrated Products': '📦',
   }
   return icons[category] || '🌿'
 }

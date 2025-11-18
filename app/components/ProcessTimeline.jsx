@@ -1,7 +1,7 @@
 'use client'
 
 import { Card, CardContent } from '@/components/ui/card'
-import { FileText, Microscope, Package, Ship, CheckCircle } from 'lucide-react'
+import { FileText, Microscope, Package, Ship, CheckCircle, ArrowRight } from 'lucide-react'
 import AnimatedSection from '@/components/AnimatedSection'
 
 export default function ProcessTimeline() {
@@ -40,8 +40,6 @@ export default function ProcessTimeline() {
 
   return (
     <section className="relative py-24 md:py-32 overflow-hidden bg-gradient-to-b from-background to-muted/20">
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
-      
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <AnimatedSection animation="fade-up">
           <div className="text-center mb-16">
@@ -57,8 +55,6 @@ export default function ProcessTimeline() {
         </AnimatedSection>
 
         <div className="relative">
-          <div className="hidden lg:block absolute top-1/2 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-500 -translate-y-1/2 rounded-full" />
-          
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8 relative">
             {steps.map((step, index) => (
               <AnimatedSection
@@ -66,18 +62,28 @@ export default function ProcessTimeline() {
                 animation="fade-scale"
                 delay={index * 150}
               >
-                <Card className="hover-elevate transition-all h-full border-2 border-transparent hover:border-amber-500/30 bg-card/80 backdrop-blur-sm">
-                  <CardContent className="pt-8 pb-6 text-center relative">
-                    <div className={`mx-auto w-20 h-20 rounded-full bg-gradient-to-br ${step.color} flex items-center justify-center mb-6 shadow-xl relative z-10`}>
-                      <step.icon className="h-9 w-9 text-white" />
+                <div className="relative flex flex-col items-center h-full">
+                  <Card className="hover-elevate transition-all h-full border-2 border-transparent hover:border-amber-500/30 bg-card/80 backdrop-blur-sm">
+                    <CardContent className="pt-10 pb-6 text-center">
+                      <div className={`mx-auto w-20 h-20 rounded-full bg-gradient-to-br ${step.color} flex items-center justify-center mb-6 shadow-xl`}>
+                        <step.icon className="h-9 w-9 text-white" />
+                      </div>
+                      <h3 className="font-bold text-lg mb-3">{step.title}</h3>
+                      <p className="text-sm text-muted-foreground leading-relaxed">{step.description}</p>
+                    </CardContent>
+                  </Card>
+                  {index < steps.length - 1 && (
+                    <div className="hidden lg:flex items-center absolute right-[-48px] top-1/2 -translate-y-1/2 z-10">
+                      <div className="h-1 w-12 bg-gradient-to-r from-amber-500 to-orange-500 rounded-full" />
+                      <ArrowRight className="ml-2 h-5 w-5 text-amber-500" />
                     </div>
-                    <div className="absolute top-6 left-1/2 -translate-x-1/2 w-12 h-12 rounded-full bg-white dark:bg-background flex items-center justify-center border-4 border-primary z-20">
-                      <span className="text-sm font-bold text-primary">{index + 1}</span>
+                  )}
+                  {index < steps.length - 1 && (
+                    <div className="lg:hidden mt-6 mb-2 flex items-center justify-center">
+                      <ArrowRight className="h-6 w-6 text-amber-500" />
                     </div>
-                    <h3 className="font-bold text-lg mb-3 mt-2">{step.title}</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{step.description}</p>
-                  </CardContent>
-                </Card>
+                  )}
+                </div>
               </AnimatedSection>
             ))}
           </div>

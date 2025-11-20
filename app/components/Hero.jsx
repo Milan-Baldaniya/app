@@ -93,11 +93,13 @@ export default function Hero() {
                 </span>
               </span>
               <br />
-              <span className="block mt-2">Spices & Agro Products</span>
+              <span className="block mt-2">Spices & Agro Products from India</span>
             </h1>
             <p className="text-xl md:text-2xl text-white/90 max-w-3xl leading-relaxed">
-              Experience the finest quality spices from India. ISO certified, 
-              ethically sourced, and delivered worldwide with complete transparency.
+              We deliver globally certified
+              spices, fresh vegetables, oil seeds, and agro products - sourced ethically,
+              quality-checked carefully, and supplied to buyers across 20+ countries.
+              Trusted for purity, consistency, and professional export service.
             </p>
           </div>
 

@@ -1,345 +1,544 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import useEmblaCarousel from 'embla-carousel-react'
-import { getAllCategories } from '@/app/data/products'
-import Link from 'next/link'
-import { motion } from 'framer-motion'
 import DragCursor from './DragCursor'
 
-const categoryIcons = {
-  'Fresh Vegetables': '🥕',
-  'Fresh Fruits': '🍎',
-  'Spices': '🌶️',
-  'Grains': '🌾',
-  'Oil Seeds': '🌻',
-  'Pulses': '🫘',
-  'Honey Products': '🍯',
-  'Dairy Products': '🥛',
-  'Ayurvedic Products': '🌿',
-  'Dehydrated Products': '📦',
+const featuredSlides = [
+  {
+    title: 'Estate Pepper',
+    category: 'Spices',
+    region: 'Idukki, Kerala',
+    image: encodeURI('/productimage/spices/black pepper.jpeg'),
+  },
+  {
+    title: 'Golden Turmeric',
+    category: 'Spices',
+    region: 'Erode, Tamil Nadu',
+    image: encodeURI('/productimage/spices/Turmeric.jpeg'),
+  },
+  {
+    title: 'Sun Orchard Mango',
+    category: 'Fresh Fruits',
+    region: 'Ratnagiri, Maharashtra',
+    image: encodeURI('/productimage/fresh fruits/mango.jpeg'),
+  },
+  {
+    title: 'Pineapple Crest',
+    category: 'Fresh Fruits',
+    region: 'Golaghat, Assam',
+    image: encodeURI('/productimage/fresh fruits/pineapple.jpeg'),
+  },
+  {
+    title: 'Ruby Pomegranate',
+    category: 'Fresh Fruits',
+    region: 'Solapur, Maharashtra',
+    image: encodeURI('/productimage/fresh fruits/Pomegranate.jpeg'),
+  },
+  {
+    title: 'Estate Maize',
+    category: 'Grains',
+    region: 'Malwa Plateau',
+    image: '/productimage/Grains/Maize.jpeg',
+  },
+  {
+    title: 'Pearl Rice',
+    category: 'Grains',
+    region: 'Kuttanad, Kerala',
+    image: '/productimage/Grains/Rice.jpeg',
+  },
+  {
+    title: 'Glasshouse Tomato',
+    category: 'Vegetables',
+    region: 'Nashik, Maharashtra',
+    image: '/productimage/vegetables/tomato.jpeg',
+  },
+]
+
+const baseTransform = {
+  rotationY: 0,
+  translateZ: 150,
+  translateY: 0,
+  opacity: 1,
 }
 
 export default function CurvedSlider() {
-  const categories = getAllCategories()
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: true,
-    align: 'start',
-    slidesToScroll: 'auto',
-    containScroll: 'trimSnaps',
+    align: 'center',
     dragFree: true,
+    containScroll: 'trimSnaps',
   })
-  const [selectedIndex, setSelectedIndex] = useState(0)
-  const [scrollSnaps, setScrollSnaps] = useState([])
+  const [hoveredIndex, setHoveredIndex] = useState(null)
+  const [slideTransforms, setSlideTransforms] = useState(
+    featuredSlides.map(() => ({ ...baseTransform }))
+  )
+  const [visibleSlides, setVisibleSlides] = useState(
+    featuredSlides.map(() => false)
+  )
+  const slideRefs = useRef([])
 
   const scrollPrev = useCallback(() => {
-    if (emblaApi) emblaApi.scrollPrev()
+    emblaApi?.scrollPrev()
   }, [emblaApi])
 
   const scrollNext = useCallback(() => {
-    if (emblaApi) emblaApi.scrollNext()
+    emblaApi?.scrollNext()
   }, [emblaApi])
 
-  const scrollTo = useCallback(
-    (index) => emblaApi && emblaApi.scrollTo(index),
-    [emblaApi]
+  const updateVisibility = useCallback(
+    (index) => {
+      setVisibleSlides((prev) => {
+        if (prev[index]) return prev
+        const next = [...prev]
+        next[index] = true
+        return next
+      })
+    },
+    [setVisibleSlides]
   )
 
-  const onSelect = useCallback(() => {
+  const calculateTransforms = useCallback(() => {
     if (!emblaApi) return
-    setSelectedIndex(emblaApi.selectedScrollSnap())
+    const viewport = emblaApi.rootNode()
+    if (!viewport) return
+
+    const bounds = viewport.getBoundingClientRect()
+    const originX = bounds.left + bounds.width / 2
+    const nodes = Array.from(emblaApi.slideNodes())
+
+    if (!nodes.length) return
+
+    const transforms = nodes.map((node) => {
+      const rect = node.getBoundingClientRect()
+      const slideCenter = rect.left + rect.width / 2
+      const rawDistance = (slideCenter - originX) / (bounds.width / 2)
+      const clamped = Math.max(Math.min(rawDistance, 1.35), -1.35)
+      const rotationY = clamped * -32
+      const translateZ = 240 - Math.abs(clamped) * 140
+      const curveFactor =
+        (1 - Math.cos(Math.min(Math.abs(clamped), 1) * Math.PI)) / 2
+      const translateY = (1 - curveFactor) * 150 - 75
+      const opacity = 1 - Math.min(Math.abs(clamped) * 0.45, 0.55)
+
+      return {
+        rotationY,
+        translateZ,
+        translateY,
+        opacity,
+      }
+    })
+
+    setSlideTransforms(transforms)
   }, [emblaApi])
 
   useEffect(() => {
     if (!emblaApi) return
-    setScrollSnaps(emblaApi.scrollSnapList())
-    emblaApi.on('select', onSelect)
-    onSelect()
+
+    let rafId = null
+    const schedule = () => {
+      if (rafId) return
+      rafId = window.requestAnimationFrame(() => {
+        calculateTransforms()
+        rafId = null
+      })
+    }
+
+    schedule()
+    emblaApi.on('scroll', schedule)
+    emblaApi.on('resize', schedule)
+    emblaApi.on('select', schedule)
 
     return () => {
-      emblaApi.off('select', onSelect)
+      if (rafId) window.cancelAnimationFrame(rafId)
+      emblaApi.off('scroll', schedule)
+      emblaApi.off('resize', schedule)
+      emblaApi.off('select', schedule)
     }
-  }, [emblaApi, onSelect])
+  }, [emblaApi, calculateTransforms])
+
+  useEffect(() => {
+    if (!slideRefs.current.length) return
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const index = Number(entry.target.dataset.slideindex)
+            if (!Number.isNaN(index)) {
+              updateVisibility(index)
+            }
+          }
+        })
+      },
+      {
+        root: emblaApi?.rootNode() ?? null,
+        threshold: 0.35,
+      }
+    )
+
+    slideRefs.current.forEach((node) => node && observer.observe(node))
+
+    return () => observer.disconnect()
+  }, [emblaApi, updateVisibility])
+
+  const getSlideStyle = (index) => {
+    const base = slideTransforms[index] ?? baseTransform
+    const isHovered = hoveredIndex === index
+    const isVisible = visibleSlides[index]
+    const hoverBoost = isHovered ? 70 : 0
+    const entryBoost = isVisible ? 0 : -180
+
+    return {
+      transform: `translateY(${base.translateY}px) translateZ(${
+        base.translateZ + hoverBoost + entryBoost
+      }px) rotateY(${base.rotationY}deg)`,
+      opacity: Math.min(1, base.opacity + (isHovered ? 0.1 : 0)),
+    }
+  }
 
   return (
-    <section className="relative py-16 md:py-24 overflow-hidden bg-gradient-to-b from-white via-amber-50/30 to-white">
+    <section className="relative py-20 md:py-28 overflow-hidden bg-gradient-to-b from-white via-amber-50/30 to-white">
       <DragCursor />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(251,191,36,0.1),transparent_50%)]" />
-      
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12"
-        >
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-600 via-orange-500 to-amber-600">
-              Our Categories
-            </span>
-          </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Explore our wide range of premium agro products across different categories
+      <div className="absolute inset-x-0 top-0 h-72 bg-[radial-gradient(circle_at_top,rgba(250,204,21,0.18),transparent_55%)] pointer-events-none" />
+
+      <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div className="text-center space-y-4 max-w-3xl mx-auto">
+          <p className="text-sm uppercase tracking-[0.3em] text-amber-600">
+            Antigravity Prompt · Tricks Style
           </p>
-        </motion.div>
+          <h2 className="text-4xl md:text-5xl font-semibold text-gray-900">
+            Tall, curved, true 3D tilt gallery
+          </h2>
+          <p className="text-base md:text-lg text-gray-600">
+            Drag across the arc—every frame bends into depth, matching the
+            reference TRICKS slider with real perspective, curvature, and hover
+            lift.
+          </p>
+        </div>
 
-        {/* Curved Slider Container with SVG Mask */}
-        <div className="curved-slider-wrapper" data-drag-cursor="true">
-          {/* SVG for Curved Mask */}
-          <svg className="curved-mask-svg" viewBox="0 0 1200 500" preserveAspectRatio="none">
-            <defs>
-              <clipPath id="curved-clip-path" clipPathUnits="objectBoundingBox">
-                <path d="M 0,0.12 Q 0.5,0 1,0.12 L 1,0.88 Q 0.5,1 0,0.88 Z" />
-              </clipPath>
-            </defs>
-          </svg>
-
-          {/* Slider Container */}
-          <div className="curved-slider-container" data-drag-cursor="true">
+        <div
+          className="antigravity-shell"
+          data-drag-cursor="true"
+          role="region"
+          aria-label="3D curved image slider"
+        >
+          <div className="antigravity-rail" data-drag-cursor="true">
             <div
-              className="curved-slider overflow-hidden"
+              className="antigravity-viewport"
               ref={emblaRef}
               data-drag-cursor="true"
             >
-              <div className="curved-slider-track flex gap-6">
-                {categories.map((category, index) => (
+              <div className="antigravity-track">
+                {featuredSlides.map((slide, index) => (
                   <div
-                    key={category}
-                    className="curved-slide flex-[0_0_auto] min-w-0 w-[280px] md:w-[320px]"
-                    data-drag-cursor="true"
+                    key={slide.title}
+                    className="antigravity-slide"
+                    data-slideindex={index}
+                    ref={(node) => {
+                      slideRefs.current[index] = node
+                    }}
+                    onMouseEnter={() => setHoveredIndex(index)}
+                    onMouseLeave={() => setHoveredIndex(null)}
                     data-cursor-hover="true"
                   >
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      whileInView={{ opacity: 1, scale: 1 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.4, delay: index * 0.1 }}
-                      className="curved-slide-inner h-full"
+                    <div
+                      className={`antigravity-slide-inner${
+                        visibleSlides[index] ? ' is-visible' : ''
+                      }`}
+                      style={getSlideStyle(index)}
                     >
-                      <Link
-                        href={`/products?category=${encodeURIComponent(category)}`}
-                        className="block group h-full"
-                        data-drag-cursor="true"
-                        data-cursor-hover="true"
-                      >
-                        <div className="curved-card relative h-full p-8 rounded-2xl bg-white border-2 border-gray-100 hover:border-amber-300 transition-all duration-300 shadow-lg hover:shadow-2xl overflow-hidden">
-                          {/* Gradient overlay on hover */}
-                          <div className="absolute inset-0 bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                          
-                          {/* Content */}
-                          <div className="relative z-10 h-full flex flex-col">
-                            <div className="text-6xl mb-4 transform group-hover:scale-110 transition-transform duration-300">
-                              {categoryIcons[category] || '🌿'}
-                            </div>
-                            <h3 className="text-2xl font-bold text-gray-900 mb-2 group-hover:text-amber-700 transition-colors">
-                              {category}
-                            </h3>
-                            <p className="text-gray-600 text-sm mb-6">
-                              Explore premium quality products
-                            </p>
-                            <div className="mt-auto flex items-center text-amber-600 font-semibold group-hover:text-amber-700 transition-colors">
-                              <span className="text-sm">View Products</span>
-                              <svg className="ml-2 h-4 w-4 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                              </svg>
-                            </div>
-                          </div>
-
-                          {/* Decorative elements */}
-                          <div className="absolute top-0 right-0 w-32 h-32 bg-amber-200/20 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:bg-amber-300/30 transition-colors" />
-                          <div className="absolute bottom-0 left-0 w-24 h-24 bg-orange-200/20 rounded-full blur-xl translate-y-1/2 -translate-x-1/2 group-hover:bg-orange-300/30 transition-colors" />
-                        </div>
-                      </Link>
-                    </motion.div>
+                      <div
+                        className="antigravity-slide-media"
+                        style={{ backgroundImage: `url(${slide.image})` }}
+                      />
+                      <div className="antigravity-slide-meta">
+                        <span className="antigravity-tag">{slide.category}</span>
+                        <h3>{slide.title}</h3>
+                        <p>{slide.region}</p>
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
           </div>
 
-          {/* Navigation Buttons */}
-          <button
-            onClick={scrollPrev}
-            className="curved-nav-btn curved-nav-prev"
-            data-cursor-hover="true"
-            aria-label="Previous categories"
-          >
-            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-          <button
-            onClick={scrollNext}
-            className="curved-nav-btn curved-nav-next"
-            data-cursor-hover="true"
-            aria-label="Next categories"
-          >
-            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        </div>
-
-        {/* Dots Indicator */}
-        <div className="flex justify-center gap-2 mt-8">
-          {scrollSnaps.map((_, index) => (
+          <div className="antigravity-controls">
             <button
-              key={index}
-              onClick={() => scrollTo(index)}
-              className={`w-2 h-2 rounded-full transition-all ${
-                index === selectedIndex
-                  ? 'bg-amber-600 w-8'
-                  : 'bg-gray-300 hover:bg-gray-400'
-              }`}
+              type="button"
+              className="antigravity-arrow"
+              onClick={scrollPrev}
+              aria-label="Previous slide"
               data-cursor-hover="true"
-              aria-label={`Go to slide ${index + 1}`}
-            />
-          ))}
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M15.5 4.5 8 12l7.5 7.5"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </button>
+            <button
+              type="button"
+              className="antigravity-arrow"
+              onClick={scrollNext}
+              aria-label="Next slide"
+              data-cursor-hover="true"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="m8.5 4.5 7.5 7.5-7.5 7.5"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
 
       <style jsx global>{`
-        /* Curved Slider Wrapper */
-        .curved-slider-wrapper {
+        .antigravity-shell {
           position: relative;
-          width: 100%;
-          height: 500px;
-          margin: 3rem 0;
-          padding: 0 2rem;
+          margin-top: 4rem;
+          padding-bottom: 4rem;
+          perspective: 1800px;
+          perspective-origin: 50% 35%;
         }
 
-        /* SVG Mask */
-        .curved-mask-svg {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          z-index: 1;
-          pointer-events: none;
-          opacity: 0;
-        }
-
-        /* Curved Slider Container with Clip Path */
-        .curved-slider-container {
+        .antigravity-rail {
           position: relative;
-          width: 100%;
-          height: 100%;
-          overflow: hidden;
-          background: linear-gradient(180deg, #FEF3E2 0%, #FFF8F0 50%, #FEF3E2 100%);
-          clip-path: path('M 0,12% Q 50%,0 100%,12% L 100%,88% Q 50%,100% 0,88% Z');
-          -webkit-clip-path: path('M 0,12% Q 50%,0 100%,12% L 100%,88% Q 50%,100% 0,88% Z');
+          height: 520px;
+          clip-path: path('M0 28% Q50% 0 100% 28% L100% 72% Q50% 100% 0 72% Z');
+          -webkit-clip-path: path('M0 28% Q50% 0 100% 28% L100% 72% Q50% 100% 0 72% Z');
+          background: linear-gradient(
+              90deg,
+              rgba(255, 255, 255, 0.65),
+              rgba(255, 255, 255, 0.4)
+            ),
+            radial-gradient(circle at 50% 80%, rgba(251, 191, 36, 0.35), transparent);
+          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6),
+            inset 0 -12px 30px rgba(217, 153, 42, 0.2);
+          border: 1px solid rgba(255, 255, 255, 0.5);
           border-radius: 0;
         }
 
-        /* Slider with 3D Perspective */
-        .curved-slider {
-          width: 100%;
-          height: 100%;
-          position: relative;
-          perspective: 1200px;
-          perspective-origin: center center;
-        }
-
-        .curved-slider-track {
-          height: 100%;
-          padding: 3rem 2rem;
-          display: flex;
-          align-items: center;
-          gap: 1.5rem;
-        }
-
-        /* Individual Slide */
-        .curved-slide {
-          height: 100%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-shrink: 0;
-        }
-
-        .curved-slide-inner {
-          width: 100%;
-          height: 100%;
-          transform-style: preserve-3d;
-        }
-
-        /* Curved Card with 3D Tilt */
-        .curved-card {
-          height: 100%;
-          min-height: 420px;
-          transform: rotateX(5deg) translateZ(0);
-          transform-style: preserve-3d;
-          transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-          backface-visibility: hidden;
-        }
-
-        .curved-card:hover {
-          transform: rotateX(5deg) translateY(-12px) translateZ(20px) scale(1.02);
-        }
-
-        /* Navigation Buttons */
-        .curved-nav-btn {
+        .antigravity-rail::after {
+          content: '';
           position: absolute;
-          top: 50%;
-          transform: translateY(-50%);
-          z-index: 20;
-          width: 48px;
-          height: 48px;
-          border-radius: 50%;
-          background: white;
-          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-          border: 1px solid #e5e7eb;
+          inset: 6% 4%;
+          border: 1px dashed rgba(255, 255, 255, 0.25);
+          border-radius: 999px;
+          pointer-events: none;
+          opacity: 0.4;
+        }
+
+        .antigravity-viewport {
+          position: relative;
+          width: 100%;
+          height: 100%;
+          overflow: visible;
+          transform-style: preserve-3d;
+        }
+
+        .antigravity-track {
           display: flex;
+          gap: 1.5rem;
+          height: 100%;
+          padding: 3.5rem 10vw;
+          transform-style: preserve-3d;
+          will-change: transform;
+        }
+
+        .antigravity-slide {
+          flex: 0 0 260px;
+          height: 100%;
+          transform-style: preserve-3d;
+          display: flex;
+        }
+
+        .antigravity-slide-inner {
+          position: relative;
+          width: 100%;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-end;
+          transform-style: preserve-3d;
+          transition: transform 0.9s cubic-bezier(0.19, 1, 0.22, 1),
+            opacity 0.45s ease;
+          will-change: transform, opacity;
+          filter: drop-shadow(0 40px 55px rgba(0, 0, 0, 0.25));
+        }
+
+        .antigravity-slide-media {
+          position: absolute;
+          inset: 0;
+          background-size: cover;
+          background-position: center;
+          background-repeat: no-repeat;
+          border-radius: 0;
+          transform: translateZ(0);
+        }
+
+        .antigravity-slide-media::after {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(
+            180deg,
+            rgba(0, 0, 0, 0.05) 0%,
+            rgba(0, 0, 0, 0.4) 100%
+          );
+          mix-blend-mode: multiply;
+          pointer-events: none;
+        }
+
+        .antigravity-slide-meta {
+          position: relative;
+          padding: 1.75rem 1.25rem 1.5rem;
+          color: white;
+          z-index: 2;
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+        }
+
+        .antigravity-tag {
+          font-size: 0.75rem;
+          opacity: 0.8;
+        }
+
+        .antigravity-slide-meta h3 {
+          font-size: 1.5rem;
+          font-weight: 600;
+          margin-top: 0.35rem;
+          letter-spacing: 0.04em;
+        }
+
+        .antigravity-slide-meta p {
+          font-size: 0.85rem;
+          letter-spacing: 0.2em;
+          opacity: 0.7;
+        }
+
+        .antigravity-slide-inner::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          pointer-events: none;
+        }
+
+        .antigravity-slide-inner:hover::before {
+          border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .antigravity-shell::before {
+          content: '';
+          position: absolute;
+          inset: auto 12% -4rem;
+          height: 160px;
+          background: radial-gradient(
+            circle,
+            rgba(0, 0, 0, 0.25) 0%,
+            rgba(0, 0, 0, 0.02) 55%,
+            transparent 70%
+          );
+          filter: blur(30px);
+          opacity: 0.7;
+          pointer-events: none;
+        }
+
+        .antigravity-controls {
+          position: absolute;
+          inset: auto 0 0;
+          display: flex;
+          justify-content: center;
+          gap: 1rem;
+          transform: translateY(60%);
+        }
+
+        .antigravity-arrow {
+          width: 52px;
+          height: 52px;
+          border-radius: 999px;
+          border: 1px solid rgba(17, 24, 39, 0.15);
+          background: white;
+          color: #111827;
+          display: inline-flex;
           align-items: center;
           justify-content: center;
-          cursor: none;
-          transition: all 0.3s ease;
-          color: #4b5563;
+          box-shadow: 0 12px 30px rgba(17, 24, 39, 0.12);
+          transition: transform 0.3s ease, box-shadow 0.3s ease,
+            border-color 0.3s ease;
         }
 
-        .curved-nav-btn:hover {
-          background: #fef3c7;
-          border-color: #f59e0b;
-          color: #f59e0b;
-          box-shadow: 0 6px 25px rgba(245, 158, 11, 0.2);
+        .antigravity-arrow svg {
+          width: 22px;
+          height: 22px;
         }
 
-        .curved-nav-prev {
-          left: -1rem;
+        .antigravity-arrow:hover {
+          transform: translateY(-4px);
+          border-color: rgba(249, 115, 22, 0.8);
+          box-shadow: 0 18px 35px rgba(249, 115, 22, 0.25);
+          color: #f97316;
         }
 
-        .curved-nav-next {
-          right: -1rem;
+        @media (max-width: 1024px) {
+          .antigravity-rail {
+            height: 460px;
+          }
+
+          .antigravity-track {
+            padding: 3rem 8vw;
+          }
+
+          .antigravity-slide {
+            flex-basis: 220px;
+          }
         }
 
         @media (max-width: 768px) {
-          .curved-slider-wrapper {
-            height: 400px;
-            padding: 0 1rem;
-          }
-          
-          .curved-card {
-            min-height: 320px;
+          .antigravity-shell {
+            margin-top: 2rem;
+            padding-bottom: 5rem;
           }
 
-          .curved-nav-prev {
-            left: 0.5rem;
+          .antigravity-rail {
+            height: 420px;
+            clip-path: path('M0 25% Q50% 2% 100% 25% L100% 75% Q50% 100% 0 75% Z');
           }
 
-          .curved-nav-next {
-            right: 0.5rem;
+          .antigravity-track {
+            padding: 2.5rem 3rem;
+            gap: 1rem;
+          }
+
+          .antigravity-slide {
+            flex-basis: 180px;
+          }
+
+          .antigravity-controls {
+            transform: translateY(70%);
           }
         }
 
-        /* Ensure proper spacing */
-        .curved-slider-track > * {
-          margin-right: 1.5rem;
-        }
+        @media (max-width: 480px) {
+          .antigravity-track {
+            padding: 2rem;
+          }
 
-        .curved-slider-track > *:last-child {
-          margin-right: 0;
+          .antigravity-slide {
+            flex-basis: 160px;
+          }
         }
       `}</style>
     </section>

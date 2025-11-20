@@ -9,6 +9,13 @@ function generateSlug(name) {
     .replace(/(^-|-$)/g, '')
 }
 
+function buildImagePath(relativePath) {
+  return `/productimage/${relativePath
+    .split('/')
+    .map(segment => encodeURIComponent(segment))
+    .join('/')}`
+}
+
 export const products = [
   // ========== FRESH VEGETABLES ==========
   {
@@ -1299,6 +1306,86 @@ export const products = [
     healthBenefits: 'Fibre + vitamins'
   }
 ]
+
+const productImages = {
+  'veg-001': [buildImagePath('vegetables/onion.jpeg')],
+  'veg-002': [buildImagePath('vegetables/garlic.jpeg')],
+  'veg-003': [buildImagePath('vegetables/potato.jpeg')],
+  'veg-004': [buildImagePath('vegetables/tomato.jpeg')],
+  'veg-005': [buildImagePath('vegetables/green chillies.jpeg')],
+  'veg-006': [buildImagePath('vegetables/lemon.jpeg')],
+  'veg-007': [buildImagePath('vegetables/ginger.jpeg')],
+  'veg-008': [buildImagePath('vegetables/drumstick.jpeg')],
+  'veg-009': [buildImagePath('vegetables/green peas.jpeg')],
+  'veg-010': [buildImagePath('vegetables/brinjal.jpeg')],
+  'fruit-001': [buildImagePath('fresh fruits/pineapple.jpeg')],
+  'fruit-002': [buildImagePath('fresh fruits/watermelon.jpeg')],
+  'fruit-003': [buildImagePath('fresh fruits/banana.jpeg')],
+  'fruit-004': [buildImagePath('fresh fruits/grapes.jpeg')],
+  'fruit-005': [buildImagePath('fresh fruits/Pomegranate.jpeg')],
+  'fruit-006': [buildImagePath('fresh fruits/papaya.jpeg')],
+  'fruit-007': [buildImagePath('fresh fruits/mango.jpeg')],
+  'spice-001': [buildImagePath('spices/Turmeric.jpeg')],
+  'spice-002': [buildImagePath('spices/Cumin Seeds (Jeera).webp')],
+  'spice-003': [buildImagePath('spices/red chillies.jpeg')],
+  'spice-004': [buildImagePath('spices/corinder seed.jpeg')],
+  'spice-005': [buildImagePath('spices/fennel.jpeg')],
+  'spice-006': [buildImagePath('spices/fenugreekseed.jpeg')],
+  'spice-007': [buildImagePath('spices/black pepper.jpeg')],
+  'spice-008': [buildImagePath('spices/Green Cardamom.jpeg')],
+  'spice-009': [buildImagePath('spices/Cloves.jpeg')],
+  'spice-010': [buildImagePath('spices/Mustard Seeds (Black).jpg')],
+  'grain-001': [buildImagePath('Grains/Rice.jpeg')],
+  'grain-002': [buildImagePath('Grains/Wheat.jpeg')],
+  'grain-003': [buildImagePath('Grains/Maize.jpeg')],
+  'grain-004': [buildImagePath('Grains/Millet.jpeg')],
+  'grain-005': [buildImagePath('Grains/Bajra.jpeg')],
+  'pulse-001': [buildImagePath('Pulses/Chickpeas (Kabuli).jpg')],
+  'pulse-002': [buildImagePath('Pulses/Toor Dal.jpg')],
+  'pulse-003': [buildImagePath('Pulses/Moong Dal.webp')],
+  'pulse-004': [buildImagePath('Pulses/Masoor Dal.webp')],
+  'pulse-005': [buildImagePath('Pulses/Urad Dal (Black Gram).jpg')],
+  'pulse-006': [buildImagePath('Pulses/Green Peas (Dried).jpg')],
+  'oilseed-001': [buildImagePath('Oil seeds/sesame seeds.jpg')],
+  'oilseed-002': [buildImagePath('Oil seeds/Groundnut.jpeg.jpg')],
+  'oilseed-003': [buildImagePath('Oil seeds/Castor Seeds.jpeg')],
+  'oilseed-004': [buildImagePath('Oil seeds/Mustard Seeds.jpg')],
+  'oilseed-005': [buildImagePath('Oil seeds/Ajwain Seeds.jpeg')],
+  'oilseed-006': [buildImagePath('Oil seeds/Cumin Seeds.jpg')],
+  'oilseed-007': [buildImagePath('Oil seeds/Fennel Seeds.jpg')],
+  'oilseed-008': [buildImagePath('Oil seeds/Fenugreek seeds.jpg')],
+  'oilseed-009': [buildImagePath('Oil seeds/Flax Seeds.jpeg')],
+  'oilseed-010': [buildImagePath('Oil seeds/niger seeds.png')],
+  'oilseed-011': [buildImagePath('Oil seeds/Dill Seeds.jpeg')],
+  'oilseed-012': [buildImagePath('Oil seeds/Onion Seeds.jpeg')],
+  'honey-001': [buildImagePath('Honey Products/Natural Honey.jpg')],
+  'honey-002': [buildImagePath('Honey Products/Multiflora Honey.webp')],
+  'honey-003': [buildImagePath('Honey Products/ajwain honey.png')],
+  'honey-004': [buildImagePath('Honey Products/Acacia Honey.webp')],
+  'dairy-001': [buildImagePath('Dairy Products/Skimmed Milk Powder.jpg')],
+  'dairy-002': [buildImagePath('Dairy Products/Full Cream Milk Powder.jpg')],
+  'dairy-003': [buildImagePath('Dairy Products/Ghee.webp')],
+  'dairy-004': [buildImagePath('Dairy Products/Butter.jpg')],
+  'dairy-005': [buildImagePath('Dairy Products/Paneer.jpg')],
+  'ayurvedic-001': [buildImagePath('AYURVEDIC PRODUCTS/ashwagandha powder.png')],
+  'ayurvedic-002': [buildImagePath('AYURVEDIC PRODUCTS/giloy powder.png')],
+  'ayurvedic-003': [buildImagePath('AYURVEDIC PRODUCTS/Amla Powder.png')],
+  'ayurvedic-004': [buildImagePath('AYURVEDIC PRODUCTS/Neem Powder.png')],
+  'ayurvedic-005': [buildImagePath('AYURVEDIC PRODUCTS/cuecumin 95% extract.png')],
+  'ayurvedic-006': [buildImagePath('AYURVEDIC PRODUCTS/triphala powder.png')],
+  'ayurvedic-007': [buildImagePath('AYURVEDIC PRODUCTS/shatavari powder.png')],
+  'ayurvedic-008': [buildImagePath('AYURVEDIC PRODUCTS/moringa powder.png')],
+  'dehydrated-001': [buildImagePath('DEHYDRATED PRODUCTS/Dehydrated Onion.png')],
+  'dehydrated-002': [buildImagePath('DEHYDRATED PRODUCTS/Dehydrated Garlic.png')],
+  'dehydrated-003': [buildImagePath('DEHYDRATED PRODUCTS/Dehydrated Vegetable Powders.png')],
+  'dehydrated-004': [buildImagePath('DEHYDRATED PRODUCTS/Dehydrated Fruit Powders.png')],
+}
+
+products.forEach(product => {
+  if (productImages[product.id]) {
+    product.images = productImages[product.id]
+  }
+})
 
 // Helper functions
 export function getProductBySlug(slug) {

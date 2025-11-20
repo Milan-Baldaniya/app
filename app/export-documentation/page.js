@@ -217,7 +217,6 @@ export default function ExportDocumentationPage() {
 
       {/* CTA */}
       <section className="py-24 md:py-32 bg-gradient-to-br from-amber-900 via-orange-900 to-amber-900 text-white">
-        <div className="absolute inset-0 bg-gradient-to-br from-black/30 via-transparent to-black/30" />
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
           <AnimatedSection animation="fade-scale">
             <h2 className="text-4xl md:text-6xl font-bold mb-6">Need Export Documentation Support?</h2>

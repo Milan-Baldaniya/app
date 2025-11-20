@@ -44,7 +44,7 @@ export default function AboutPage() {
                   </span>
                 </h2>
                 <p className="text-gray-700 text-lg leading-relaxed mb-4">
-                  Founded in 2010, Krushi World Export has grown to become one of India's leading exporters 
+                  Founded in 2025, Krushi World Export has grown to become one of India's leading exporters 
                   of premium quality agro products. With over 15 years of experience in the international trade 
                   of spices, grains, pulses, oil seeds, and dry fruits, we have established a reputation for 
                   excellence and reliability.
@@ -190,7 +190,6 @@ export default function AboutPage() {
 
       {/* Certifications */}
       <section className="py-24 md:py-32 bg-gradient-to-br from-amber-900 via-orange-900 to-amber-900 text-white">
-        <div className="absolute inset-0 bg-gradient-to-br from-black/30 via-transparent to-black/30" />
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <AnimatedSection animation="fade-up">
             <div className="text-center mb-16">

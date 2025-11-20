@@ -37,27 +37,21 @@ export default function TrustSection() {
 
   const features = [
     {
-      icon: Award,
-      title: 'ISO Certified',
-      description: 'ISO 22000:2018 certified facility ensuring highest quality standards',
-      color: 'from-amber-500 to-orange-500',
-    },
-    {
       icon: Factory,
-      title: 'Modern Infrastructure',
-      description: 'State-of-the-art processing and packaging facilities with quality control',
+      title: 'IEC CERTIFIED',
+      description: 'for secure and compliant global trade',
       color: 'from-orange-500 to-red-500',
     },
     {
       icon: Ship,
-      title: 'Global Export',
-      description: 'Export to 20+ countries with complete documentation and compliance',
+      title: 'FSSAI CERTIFIED',
+      description: 'ensuring safe, high-quality food products',
       color: 'from-amber-600 to-orange-600',
     },
     {
       icon: CheckCircle2,
-      title: 'Quality Assured',
-      description: 'Rigorous testing and quality checks at every stage of production',
+      title: 'APEDA GUJARAT REGISTERED',
+      description: 'for trusted agricultural exports',
       color: 'from-yellow-500 to-amber-500',
     },
   ]
@@ -82,24 +76,26 @@ export default function TrustSection() {
           </div>
         </AnimatedSection>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
-          {features.map((feature, index) => (
-            <AnimatedSection
-              key={index}
-              animation="fade-scale"
-              delay={index * 100}
-            >
-              <Card className="text-center hover-elevate transition-all h-full border-2 border-transparent hover:border-amber-500/30">
-                <CardContent className="pt-8 pb-6">
-                  <div className={`mx-auto w-16 h-16 rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center mb-6 shadow-lg`}>
-                    <feature.icon className="h-8 w-8 text-white" />
-                  </div>
-                  <h3 className="font-bold text-lg mb-3">{feature.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
-                </CardContent>
-              </Card>
-            </AnimatedSection>
-          ))}
+        <div className="flex justify-center mb-20">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl w-full">
+            {features.map((feature, index) => (
+              <AnimatedSection
+                key={index}
+                animation="fade-scale"
+                delay={index * 100}
+              >
+                <Card className="text-center hover-elevate transition-all h-full border-2 border-transparent hover:border-amber-500/30">
+                  <CardContent className="pt-8 pb-6">
+                    <div className={`mx-auto w-16 h-16 rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center mb-6 shadow-lg`}>
+                      <feature.icon className="h-8 w-8 text-white" />
+                    </div>
+                    <h3 className="font-bold text-lg mb-3">{feature.title}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
+                  </CardContent>
+                </Card>
+              </AnimatedSection>
+            ))}
+          </div>
         </div>
 
         <AnimatedSection animation="fade-up">

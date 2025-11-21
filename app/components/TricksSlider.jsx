@@ -6,6 +6,7 @@ import { getAllCategories } from '@/app/data/products'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import DragCursor from './DragCursor'
+import Image from 'next/image'
 
 const categoryIcons = {
   'Fresh Vegetables': '🥕',
@@ -18,6 +19,19 @@ const categoryIcons = {
   'Dairy Products': '🥛',
   'Ayurvedic Products': '🌿',
   'Dehydrated Products': '📦',
+}
+
+const categoryImages = {
+  'Fresh Vegetables': '/category-images/fresh-vegetables.png',
+  'Fresh Fruits': '/category-images/fresh-fruits.png',
+  'Spices': '/category-images/spices.png',
+  'Grains': '/category-images/grains.png',
+  'Oil Seeds': '/category-images/oil-seeds.png',
+  'Pulses': '/category-images/pulses.png',
+  'Honey Products': '/category-images/honey-products.png',
+  'Dairy Products': '/category-images/dairy-products.png',
+  'Ayurvedic Products': '/category-images/ayurvedic-products.png',
+  'Dehydrated Products': '/category-images/dehydrated-products.png',
 }
 
 export default function TricksSlider() {
@@ -133,13 +147,31 @@ export default function TricksSlider() {
                     >
                       {/* Curved Frame */}
                       <div className="curved-picture-frame">
-                        {/* Frame content */}
+                        {/* Frame content - Clean images with hover text */}
                         <div className="frame-content">
-                          <div className="category-icon">
-                            {categoryIcons[category] || '🌿'}
-                          </div>
-                          <h3 className="category-name">{category}</h3>
-                          <p className="category-desc">Explore Products</p>
+                          {categoryImages[category] ? (
+                            <div className="category-image-wrapper">
+                              <Image
+                                src={categoryImages[category]}
+                                alt={category}
+                                fill
+                                className="category-image"
+                                sizes="(max-width: 768px) 65vw, 30vw"
+                              />
+                              {/* Hover Overlay with Text */}
+                              <div className="hover-overlay">
+                                <h3 className="category-name-hover">{category}</h3>
+                              </div>
+                            </div>
+                          ) : (
+                            /* Fallback for categories without images */
+                            <div className="category-text-content">
+                              <div className="category-icon">
+                                {categoryIcons[category] || '🌿'}
+                              </div>
+                              <h3 className="category-name">{category}</h3>
+                            </div>
+                          )}
                         </div>
 
                         {/* Frame border with curve */}
@@ -316,6 +348,76 @@ export default function TricksSlider() {
           justify-content: center;
           padding: 2rem;
           z-index: 2;
+          overflow: hidden;
+        }
+
+        /* Category Image Wrapper - Clean display */
+        .category-image-wrapper {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          z-index: 1;
+        }
+
+        .category-image {
+          object-fit: cover;
+          object-position: center;
+          transition: transform 0.5s ease;
+        }
+
+        .curved-frame-slide:hover .category-image {
+          transform: scale(1.1);
+        }
+
+        /* Hover Overlay - Hidden by default, shown on hover */
+        .hover-overlay {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(
+            to top,
+            rgba(0, 0, 0, 0.8) 0%,
+            rgba(0, 0, 0, 0.4) 50%,
+            rgba(0, 0, 0, 0) 100%
+          );
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: flex-end;
+          padding-bottom: 5rem;
+          opacity: 0;
+          transition: opacity 0.3s ease;
+          z-index: 2;
+        }
+
+        .curved-frame-slide:hover .hover-overlay {
+          opacity: 1;
+        }
+
+        .category-name-hover {
+          font-size: 1.75rem;
+          font-weight: 700;
+          color: white;
+          text-align: center;
+          margin-bottom: 0.5rem;
+          transform: translateY(20px);
+          transition: transform 0.3s ease;
+          text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .curved-frame-slide:hover .category-name-hover {
+          transform: translateY(0);
+        }
+
+        /* Text Content - For fallback only */
+        .category-text-content {
+          position: relative;
+          z-index: 3;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
         }
 
         .category-icon {

@@ -275,10 +275,7 @@ export default function DragCursor() {
     }
   }, [])
 
-  // Check if device is touch-enabled
-  if (typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0)) {
-    return null
-  }
+
 
   return (
     <>

@@ -5,7 +5,7 @@ import Footer from './components/Footer'
 import CustomCursor from './components/CustomCursor'
 
 const inter = Inter({ subsets: ['latin'] })
-const playfair = Playfair_Display({ 
+const playfair = Playfair_Display({
   subsets: ['latin'],
   variable: '--font-playfair',
   weight: ['400', '500', '600', '700', '800', '900']
@@ -24,8 +24,8 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body className={`${inter.className} ${playfair.variable}`}>
+    <html lang="en" suppressHydrationWarning={true}>
+      <body className={`${inter.className} ${playfair.variable}`} suppressHydrationWarning={true}>
         <CustomCursor />
         <Header />
         <main className="min-h-screen overflow-x-hidden">{children}</main>

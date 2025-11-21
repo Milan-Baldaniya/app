@@ -27,7 +27,7 @@ export default function TricksSlider() {
 
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: true, // Infinite loop enabled
-    align: 'start',
+    align: 'center',
     slidesToScroll: 1,
     skipSnaps: false,
     dragFree: true,
@@ -51,30 +51,7 @@ export default function TricksSlider() {
 
   const onScroll = useCallback(() => {
     if (!emblaApi) return
-
-    // Update 3D transforms for each slide based on position
-    const slides = emblaApi.slideNodes()
-    const scrollSnap = emblaApi.selectedScrollSnap()
-
-    slides.forEach((slideNode, index) => {
-      const slideElement = slideRefs.current[index]
-      if (!slideElement) return
-
-      // Calculate distance from center
-      const distanceFromCenter = index - scrollSnap
-
-      // Very subtle rotation (Y-axis)
-      const rotationY = distanceFromCenter * 6 // 6 degrees per slide
-
-      // Very subtle depth
-      const translateZ = -Math.abs(distanceFromCenter) * 25
-
-      // Apply transforms
-      slideElement.style.transform = `
-        translateZ(${translateZ}px)
-        rotateY(${rotationY}deg)
-      `
-    })
+    // 3D transforms removed for simple smooth scrolling
   }, [emblaApi])
 
   useEffect(() => {
@@ -116,9 +93,26 @@ export default function TricksSlider() {
           </p>
         </motion.div>
 
-        {/* Curved Frame Slider */}
+        {/* Curved Frame Slider with Wave Effects */}
         <div className="curved-frame-wrapper" data-drag-cursor="true">
-          {/* The curved strip container */}
+          {/* Top Wave SVG */}
+          <div className="wave-top">
+            <svg
+              version="1.1"
+              xmlns="http://www.w3.org/2000/svg"
+              xmlnsXlink="http://www.w3.org/1999/xlink"
+              x="0px"
+              y="0px"
+              viewBox="0 0 804 50.167"
+              enableBackground="new 0 0 804 50.167"
+              xmlSpace="preserve"
+              preserveAspectRatio="none"
+            >
+              <path fill="#fbbf24" d="M804,0v16.671c0,0-204.974,33.496-401.995,33.496C204.974,50.167,0,16.671,0,16.671V0H804z" />
+            </svg>
+          </div>
+
+          {/* The straight slider container */}
           <div className="curved-frame-container">
             <div
               className="curved-frame-slider"
@@ -158,6 +152,23 @@ export default function TricksSlider() {
             </div>
           </div>
 
+          {/* Bottom Wave SVG */}
+          <div className="wave-bottom">
+            <svg
+              version="1.1"
+              xmlns="http://www.w3.org/2000/svg"
+              xmlnsXlink="http://www.w3.org/1999/xlink"
+              x="0px"
+              y="0px"
+              viewBox="0 0 804 50.167"
+              enableBackground="new 0 0 804 50.167"
+              xmlSpace="preserve"
+              preserveAspectRatio="none"
+            >
+              <path fill="#fbbf24" d="M0,50.167v-16.671c0,0,204.974-33.496,401.995-33.496C599.026,0,804,33.496,804,33.496v16.671H0z" />
+            </svg>
+          </div>
+
           {/* Navigation Buttons */}
           <div className="curved-nav-container">
             <button
@@ -191,7 +202,35 @@ export default function TricksSlider() {
           margin: 2rem auto;
         }
 
-        /* Curved strip container */
+        /* Wave overlays - positioned to align with curved edges */
+        .wave-top,
+        .wave-bottom {
+          position: absolute;
+          left: 0;
+          right: 0;
+          width: 100%;
+          height: 70px;
+          z-index: 10;
+          pointer-events: none;
+          filter: drop-shadow(0 4px 12px rgba(251, 146, 60, 0.15));
+        }
+
+        .wave-top {
+          top: -5px;
+        }
+
+        .wave-bottom {
+          bottom: -5px;
+        }
+
+        .wave-top svg,
+        .wave-bottom svg {
+          width: 100%;
+          height: 100%;
+          display: block;
+        }
+
+        /* Curved slider container with wave shape */
         .curved-frame-container {
           position: relative;
           width: 100%;
@@ -202,9 +241,9 @@ export default function TricksSlider() {
             rgba(251, 146, 60, 0.08) 50%, 
             rgba(251, 191, 36, 0.05) 100%
           );
-          /* Curved path */
-          clip-path: path('M 0,20% Q 50%,5% 100%,20% L 100%,80% Q 50%,95% 0,80% Z');
-          -webkit-clip-path: path('M 0,20% Q 50%,5% 100%,20% L 100%,80% Q 50%,95% 0,80% Z');
+          /* Curved path to match the wave shape */
+          clip-path: path('M 0,10% Q 50%,0% 100%,10% L 100%,90% Q 50%,100% 0,90% Z');
+          -webkit-clip-path: path('M 0,10% Q 50%,0% 100%,10% L 100%,90% Q 50%,100% 0,90% Z');
         }
 
         /* Slider with subtle 3D perspective */
@@ -226,16 +265,16 @@ export default function TricksSlider() {
           display: flex;
           height: 100%;
           align-items: center;
-          gap: 16px;
-          padding: 0 10%;
+          gap: 20px; /* Increased gap slightly */
+          padding: 0; /* Removed padding to use full width */
           transform-style: preserve-3d;
         }
 
         /* Individual slide */
         .curved-frame-slide {
           flex: 0 0 auto;
-          width: 300px;
-          height: 450px;
+          width: 30%; /* 3 cards (30% * 3 = 90%) + gaps + edges */
+          height: 550px;
           transform-style: preserve-3d;
           transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -256,17 +295,14 @@ export default function TricksSlider() {
           background: linear-gradient(135deg, #fff 0%, #fef3e2 100%);
           border-radius: 20px;
           overflow: hidden;
-          box-shadow: 
-            0 10px 40px rgba(0, 0, 0, 0.15),
-            inset 0 0 0 1px rgba(251, 191, 36, 0.2);
+          /* Shadow removed as requested */
+          border: 1px solid rgba(251, 191, 36, 0.2);
           transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .curved-frame-slide:hover .curved-picture-frame {
-          transform: translateZ(20px) scale(1.02);
-          box-shadow: 
-            0 20px 60px rgba(251, 146, 60, 0.25),
-            inset 0 0 0 2px rgba(251, 146, 60, 0.4);
+          transform: scale(1.02);
+          /* Shadow removed as requested */
         }
 
         /* Frame content */
@@ -329,12 +365,12 @@ export default function TricksSlider() {
         /* Navigation container */
         .curved-nav-container {
           position: absolute;
-          bottom: -70px;
+          bottom: 10px; /* Moved up to sit on the wave */
           left: 50%;
           transform: translateX(-50%);
           display: flex;
           gap: 12px;
-          z-index: 10;
+          z-index: 20; /* Higher than wave (z-index: 10) */
         }
 
         /* Navigation buttons */
@@ -342,9 +378,8 @@ export default function TricksSlider() {
           width: 48px;
           height: 48px;
           border-radius: 50%;
-          background: rgba(251, 191, 36, 0.1);
-          backdrop-filter: blur(8px);
-          border: 1.5px solid rgba(251, 146, 60, 0.25);
+          background: #ffffff; /* Solid white for contrast */
+          border: 2px solid #ffffff;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -353,12 +388,14 @@ export default function TricksSlider() {
           color: #d97706;
           position: relative;
           z-index: 100;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Shadow for lift */
         }
 
         .curved-nav-btn:hover {
-          background: rgba(251, 146, 60, 0.2);
-          border-color: rgba(251, 146, 60, 0.5);
-          transform: scale(1.05);
+          background: #fffbeb; /* Very light amber on hover */
+          transform: scale(1.1);
+          color: #b45309;
+          box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
         }
 
         .curved-nav-btn:active {
@@ -368,17 +405,17 @@ export default function TricksSlider() {
         /* Responsive adjustments */
         @media (max-width: 768px) {
           .curved-frame-wrapper {
-            height: 450px;
+            height: 500px;
           }
 
           .curved-frame-slide {
-            width: 240px;
-            height: 360px;
+            width: 65%; /* Show 1 main card + partials on mobile */
+            height: 500px;
           }
 
           .curved-frame-track {
-            padding: 0 5%;
-            gap: 12px;
+            padding: 0;
+            gap: 0;
           }
 
           .category-icon {
@@ -390,23 +427,28 @@ export default function TricksSlider() {
           }
 
           .curved-nav-container {
-            bottom: -60px;
+            bottom: 5px; /* Adjusted for smaller mobile wave */
           }
 
           .curved-nav-btn {
             width: 42px;
             height: 42px;
           }
+
+          .wave-top,
+          .wave-bottom {
+            height: 50px;
+          }
         }
 
         @media (max-width: 480px) {
           .curved-frame-wrapper {
-            height: 380px;
+            height: 450px;
           }
 
           .curved-frame-slide {
-            width: 200px;
-            height: 300px;
+            width: 55%; /* Reduced width to show adjacent cards (0.6 || 1 || 0.6 layout) */
+            height: 450px;
           }
 
           .category-icon {
@@ -416,8 +458,13 @@ export default function TricksSlider() {
           .category-name {
             font-size: 1.1rem;
           }
+
+          .wave-top,
+          .wave-bottom {
+            height: 40px;
+          }
         }
       `}</style>
-    </section>
+    </section >
   )
 }

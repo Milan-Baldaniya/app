@@ -31,11 +31,11 @@ const nextConfig = {
   },
   async headers() {
     const isDev = process.env.NODE_ENV === 'development';
-    
+
     // CSP for production - strict, no eval
     const productionCSP = [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline'", // unsafe-inline needed for Next.js inline scripts
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval'", // unsafe-inline needed for Next.js inline scripts
       "style-src 'self' 'unsafe-inline'", // unsafe-inline needed for Tailwind and component styles
       "img-src 'self' data: https: blob:",
       "font-src 'self' data: https: fonts.gstatic.com", // Google Fonts
@@ -71,9 +71,9 @@ const nextConfig = {
         source: "/(.*)",
         headers: [
           { key: "X-Frame-Options", value: "ALLOWALL" },
-          { 
-            key: "Content-Security-Policy", 
-            value: isDev ? developmentCSP : productionCSP 
+          {
+            key: "Content-Security-Policy",
+            value: isDev ? developmentCSP : productionCSP
           },
           { key: "Access-Control-Allow-Origin", value: process.env.CORS_ORIGINS || "*" },
           { key: "Access-Control-Allow-Methods", value: "GET, POST, PUT, DELETE, OPTIONS" },

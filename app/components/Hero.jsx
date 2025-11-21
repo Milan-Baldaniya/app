@@ -10,10 +10,13 @@ import { BackgroundBeamsWithCollision } from '@/components/ui/background-beams-w
 export default function Hero() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const [currentWordIndex, setCurrentWordIndex] = useState(0)
-  
+
   const rotatingWords = ['Premium', 'Organic', 'Authentic', 'Export Quality']
 
+  const [mounted, setMounted] = useState(false)
+
   useEffect(() => {
+    setMounted(true)
     const handleMouseMove = (e) => {
       setMousePosition({ x: e.clientX, y: e.clientY })
     }
@@ -28,8 +31,8 @@ export default function Hero() {
     return () => clearInterval(interval)
   }, [])
 
-  const parallaxX = typeof window !== 'undefined' ? (mousePosition.x - window.innerWidth / 2) / 50 : 0
-  const parallaxY = typeof window !== 'undefined' ? (mousePosition.y - window.innerHeight / 2) / 50 : 0
+  const parallaxX = mounted ? (mousePosition.x - window.innerWidth / 2) / 50 : 0
+  const parallaxY = mounted ? (mousePosition.y - window.innerHeight / 2) / 50 : 0
 
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden">
@@ -41,23 +44,23 @@ export default function Hero() {
             fill
             className="object-cover scale-110 transition-transform duration-500 ease-out"
             style={{
-              transform: `translate(${parallaxX}px, ${parallaxY}px)`,
+              transform: mounted ? `translate(${parallaxX}px, ${parallaxY}px)` : 'none',
             }}
             priority
             quality={90}
             unoptimized
           />
         </div>
-        
+
         <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/50 to-amber-900/60 animate-gradient" />
-        
+
         <div className="absolute top-20 left-20 w-64 h-64 bg-amber-500/20 rounded-full blur-3xl animate-blob" />
         <div className="absolute bottom-20 right-20 w-96 h-96 bg-orange-500/20 rounded-full blur-3xl animate-blob" style={{ animationDelay: '2s' }} />
         <div className="absolute top-1/2 left-1/2 w-80 h-80 bg-yellow-500/10 rounded-full blur-3xl animate-blob" style={{ animationDelay: '4s' }} />
       </div>
 
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        {[...Array(20)].map((_, i) => (
+        {mounted && [...Array(20)].map((_, i) => (
           <div
             key={i}
             className="absolute w-1 h-1 bg-amber-400/30 rounded-full animate-float"
@@ -77,7 +80,7 @@ export default function Hero() {
           <div className="absolute inset-0" />
         </BackgroundBeamsWithCollision>
       </div>
-      
+
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-32 z-10">
         <div className="max-w-4xl space-y-8">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/20 backdrop-blur-sm border border-amber-500/30 animate-fade-in-up">
@@ -96,7 +99,7 @@ export default function Hero() {
               <span className="block mt-2">Agro & Spice Products from India</span>
             </h1>
             <p className="text-xl md:text-2xl text-white/90 max-w-3xl leading-relaxed">
-            We deliver globally certified spices, fresh vegetables, oil seeds, and agro products - sourced ethically, quality-checked carefully, and supplied to buyers across 20+ countries. Trusted for purity, consistency, and professional export service.
+              We deliver globally certified spices, fresh vegetables, oil seeds, and agro products - sourced ethically, quality-checked carefully, and supplied to buyers across 20+ countries. Trusted for purity, consistency, and professional export service.
             </p>
           </div>
 

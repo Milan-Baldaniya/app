@@ -4,6 +4,7 @@ import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import AnimatedSection from '@/components/AnimatedSection'
 import { Card, CardContent, CardHeader, CardFooter } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -184,7 +185,7 @@ export default function ProductsPageClient() {
                     className="animate-fade-in-up h-full"
                     style={{ animationDelay: `${idx * 40}ms` }}
                   >
-                    <ProductCard product={product} />
+                    <ProductCard product={product} priority={idx < 3} />
                   </div>
                 ))}
               </div>
@@ -206,7 +207,7 @@ export default function ProductsPageClient() {
   )
 }
 
-function ProductCard({ product }) {
+function ProductCard({ product, priority = false }) {
   const cardRef = useRef(null)
   const frameRef = useRef(null)
   const badgeLabel = Array.isArray(product.grade) ? product.grade[0] : product.grade || product.category
@@ -266,10 +267,14 @@ function ProductCard({ product }) {
 
           <div className="relative aspect-[4/3] overflow-hidden bg-muted">
             {product.images?.[0] ? (
-              <img
+              <Image
                 src={product.images[0]}
                 alt={product.name}
-                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                fill
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                quality={90}
+                priority={priority}
+                className="object-cover transition-transform duration-700 group-hover:scale-110"
               />
             ) : (
               <div className="h-full w-full flex items-center justify-center text-6xl bg-gradient-to-br from-amber-100 to-orange-100">

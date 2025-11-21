@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useParams } from 'next/navigation'
+import Image from 'next/image'
 import { getProductBySlug } from '@/app/data/products'
 
 export default function ProductDetailPageClient() {
@@ -42,9 +43,17 @@ export default function ProductDetailPageClient() {
           {/* Product Images */}
           <div>
             <div className="bg-white rounded-2xl shadow-lg p-8 sticky top-24">
-              <div className="aspect-square bg-gradient-to-br from-blue-100 to-amber-100 rounded-xl overflow-hidden mb-4">
+              <div className="relative aspect-square bg-gradient-to-br from-blue-100 to-amber-100 rounded-xl overflow-hidden mb-4">
                 {product.images?.[0] ? (
-                  <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover" />
+                  <Image
+                    src={product.images[0]}
+                    alt={product.name}
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    className="object-cover"
+                    quality={95}
+                    priority
+                  />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-8xl">
                     {getCategoryIcon(product.category)}
@@ -54,8 +63,15 @@ export default function ProductDetailPageClient() {
               {product.images && product.images.length > 1 && (
                 <div className="grid grid-cols-4 gap-2">
                   {product.images.slice(1, 5).map((img, idx) => (
-                    <div key={idx} className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
-                      <img src={img} alt={`${product.name} ${idx + 2}`} className="w-full h-full object-cover" />
+                    <div key={idx} className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden">
+                      <Image
+                        src={img}
+                        alt={`${product.name} ${idx + 2}`}
+                        fill
+                        sizes="(max-width: 768px) 50vw, 25vw"
+                        className="object-cover"
+                        quality={90}
+                      />
                     </div>
                   ))}
                 </div>

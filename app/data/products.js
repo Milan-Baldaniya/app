@@ -705,6 +705,32 @@ export const products = [
     productBenefits: 'Ready meals',
     healthBenefits: 'Fibre & protein'
   },
+  {
+    id: 'pulse-007',
+    name: 'Dried Lima Beans',
+    slug: generateSlug('Dried Lima Beans'),
+    category: 'Pulses',
+    images: [buildImagePath('Pulses/dried-lima-beans.png')],
+    shortDesc: 'Premium quality dried lima beans with buttery texture and mild flavor, high in protein and fiber',
+    longDesc: 'Premium-quality Dried Lima Beans are naturally air-dried beans known for their buttery texture and mild flavor. Commonly used in soups, stews, salads, curries, and protein-rich meals. Our beans are carefully cleaned, sorted, and packed to ensure consistent size, purity, and long shelf life. Machine cleaned and hand-picked for superior quality.',
+    moq: '5 Metric Ton',
+    hsCode: '071333',
+    specifications: [
+      { key: 'Color', value: 'Light cream / pale green' },
+      { key: 'Size', value: '12–18 mm' },
+      { key: 'Moisture', value: '≤ 14%' },
+      { key: 'Purity', value: '98–99%' },
+      { key: 'Admixture', value: '≤ 1–2%' },
+      { key: 'Foreign Matter', value: '≤ 0.5%' },
+      { key: 'Broken/Damaged', value: '≤ 1%' },
+      { key: 'Shelf Life', value: '12–18 months' },
+      { key: 'Processing', value: 'Machine cleaned & hand-picked' }
+    ],
+    grade: ['Export Grade', 'Premium'],
+    packaging: ['25kg PP bags', '50kg PP bags', 'Custom packaging available'],
+    productBenefits: 'Long shelf life, easy storage & transport, versatile ingredient for multiple cuisines, uniform bean size for consistent cooking, value-for-money for wholesalers & importers',
+    healthBenefits: 'High in protein for muscle growth, rich in fiber for digestion, low fat & cholesterol-free for heart health, contains iron, potassium, magnesium & B-vitamins, low glycemic index helps control blood sugar, boosts immunity with antioxidants'
+  },
 
   // ========== OIL SEEDS ==========
   {

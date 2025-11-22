@@ -429,7 +429,7 @@ export default function TermsOfUsePage() {
             <p className="text-gray-700 font-semibold mb-2">Krushi World Export</p>
             <p className="text-gray-700">Email: <a href="mailto:info@krushiworldexport.com" className="text-amber-600 hover:underline">info@krushiworldexport.com</a></p>
             <p className="text-gray-700">Phone: +91 98765 43210</p>
-            <p className="text-gray-700">Address: Gujarat, India</p>
+            <p className="text-gray-700">Address: 404, Swami Narayan Society, Godadara Canal Road<br />Nearby: Sai Krupa Electrical Works<br />Surat, 395012, Gujarat, India</p>
           </div>
           <p className="text-gray-700 leading-relaxed pt-2">
             We will respond to your inquiry as soon as possible.

@@ -82,7 +82,12 @@ export default function Footer() {
             <ul className="space-y-3 text-sm text-muted-foreground">
               <li className="flex items-start gap-2">
                 <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                <span>Gujarat, India</span>
+                <div className="text-sm">
+                  <div>404, Swami Narayan Society</div>
+                  <div>Godadara Canal Road</div>
+                  <div>Nearby: Sai Krupa Electrical Works</div>
+                  <div>Surat, 395012, Gujarat, India</div>
+                </div>
               </li>
               <li className="flex items-center gap-2">
                 <Phone className="h-4 w-4 flex-shrink-0" />

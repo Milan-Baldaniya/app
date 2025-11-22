@@ -93,7 +93,7 @@ export default function ContactPage() {
                       {
                         icon: MapPin,
                         title: 'Address',
-                        content: '123 Export Hub\nSurat, Gujarat 395001\nIndia',
+                        content: '404, Swami Narayan Society\nGodadara Canal Road\nNearby: Sai Krupa Electrical Works\nSurat, 395012\nSurat, Gujarat, India',
                         color: 'from-blue-500 to-blue-600',
                       },
                       {

@@ -132,7 +132,7 @@ export default function ProductDetailPageClient() {
                   Request Quote
                 </button>
                 <a
-                  href="https://wa.me/919876543210"
+                  href="https://wa.me/917874998158"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="bg-green-500 text-white px-6 py-4 rounded-xl font-semibold hover:bg-green-600 transition flex items-center gap-2"

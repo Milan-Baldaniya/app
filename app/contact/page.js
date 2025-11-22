@@ -93,7 +93,7 @@ export default function ContactPage() {
                       {
                         icon: MapPin,
                         title: 'Address',
-                        content: '123 Export Hub\nAhmedabad, Gujarat 380001\nIndia',
+                        content: '123 Export Hub\nSurat, Gujarat 395001\nIndia',
                         color: 'from-blue-500 to-blue-600',
                       },
                       {
@@ -262,7 +262,7 @@ export default function ContactPage() {
           <div className="mt-12 lg:mt-16">
             <Card className="overflow-hidden shadow-lg">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d235013.74842465583!2d72.43929984349378!3d23.02047408722869!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395e848aba5bd449%3A0x4fcedd11614f6516!2sAhmedabad%2C%20Gujarat!5e0!3m2!1sen!2sin!4v1234567890"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d118106.57312345678!2d72.8311!3d21.1702!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be04e59411d156b%3A0xfe4558290938b042!2sSurat%2C%20Gujarat!5e0!3m2!1sen!2sin!4v1234567890"
                 width="100%"
                 height="450"
                 style={{ border: 0 }}

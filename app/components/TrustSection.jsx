@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
-import { Award, Factory, Ship, CheckCircle2 } from 'lucide-react'
+import { Award, Factory, Ship, CheckCircle2, ShieldCheck } from 'lucide-react'
 import AnimatedSection from '@/components/AnimatedSection'
 
 export default function TrustSection() {
@@ -36,6 +36,12 @@ export default function TrustSection() {
   }, [])
 
   const features = [
+    {
+      icon: ShieldCheck,
+      title: 'ISO CERTIFIED',
+      description: 'meeting international quality standards for excellence',
+      color: 'from-blue-500 to-indigo-600',
+    },
     {
       icon: Factory,
       title: 'IEC CERTIFIED',
@@ -77,7 +83,7 @@ export default function TrustSection() {
         </AnimatedSection>
 
         <div className="flex justify-center mb-20">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl w-full">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl w-full">
             {features.map((feature, index) => (
               <AnimatedSection
                 key={index}

@@ -91,11 +91,11 @@ export default function Footer() {
               </li>
               <li className="flex items-center gap-2">
                 <Phone className="h-4 w-4 flex-shrink-0" />
-                <span>+91 98765 43210</span>
+                <span>+91 78749 98158</span>
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="h-4 w-4 flex-shrink-0" />
-                <span>info@krushiworldexport.com</span>
+                <span>krushiw@gmail.com</span>
               </li>
             </ul>
             <div className="mt-4">

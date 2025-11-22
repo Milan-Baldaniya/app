@@ -108,7 +108,7 @@ export default function Header() {
 
           <div className="flex items-center gap-2">
             <a
-              href="https://wa.me/919876543210"
+              href="https://wa.me/917874998158"
               target="_blank"
               rel="noopener noreferrer"
               className="hidden md:flex"
@@ -180,7 +180,7 @@ export default function Header() {
                     <div className="flex flex-col gap-3 text-sm text-muted-foreground">
                       <div className="flex items-center gap-2 transition-colors duration-300 hover:text-amber-600">
                         <Phone className="h-4 w-4" />
-                        <span>+91 98765 43210</span>
+                        <span>+91 78749 98158</span>
                       </div>
                       <div className="flex items-center gap-2 transition-colors duration-300 hover:text-amber-600">
                         <Mail className="h-4 w-4" />

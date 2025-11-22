@@ -99,13 +99,13 @@ export default function ContactPage() {
                       {
                         icon: Phone,
                         title: 'Phone',
-                        content: '+91 98765 43210\n+91 98765 43211',
+                        content: '+91 78749 98158',
                         color: 'from-amber-500 to-orange-500',
                       },
                       {
                         icon: Mail,
                         title: 'Email',
-                        content: 'info@krushiworldexport.com\nsales@krushiworldexport.com',
+                        content: 'krushiw@gmail.com',
                         color: 'from-green-500 to-emerald-500',
                       },
                       {
@@ -129,7 +129,7 @@ export default function ContactPage() {
 
                   <div className="mt-8 pt-8 border-t border-gray-200">
                     <Link
-                      href="https://wa.me/919876543210"
+                      href="https://wa.me/917874998158"
                       target="_blank"
                       rel="noopener noreferrer"
                     >

@@ -45,17 +45,15 @@ const buildShell = ({ heading, subheading, content, footerNote }) => `
             <td style="padding:40px;">
               <div style="font-size:14px;text-transform:uppercase;letter-spacing:3px;color:${accentColor};font-weight:600;margin-bottom:8px;">${companyName}</div>
               <h1 style="margin:0 0 6px;font-size:30px;color:${accentColor};">${heading}</h1>
-              ${
-                subheading
-                  ? `<p style="margin:0 0 28px;font-size:15px;color:#64748b;">${subheading}</p>`
-                  : '<div style="height:12px;"></div>'
-              }
+              ${subheading
+    ? `<p style="margin:0 0 28px;font-size:15px;color:#64748b;">${subheading}</p>`
+    : '<div style="height:12px;"></div>'
+  }
               <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">${content}</table>
-              ${
-                footerNote
-                  ? `<p style="margin:28px 0 0;font-size:13px;color:#94a3b8;">${footerNote}</p>`
-                  : ''
-              }
+              ${footerNote
+    ? `<p style="margin:28px 0 0;font-size:13px;color:#94a3b8;">${footerNote}</p>`
+    : ''
+  }
             </td>
           </tr>
         </table>
@@ -101,11 +99,13 @@ const buildUserEmail = ({ name, subject, message }) => {
 }
 
 export async function POST(request) {
+  console.log('--- Contact Form Submission Started ---');
   try {
     const requiredEnvVars = ['SMTP_HOST', 'SMTP_PORT', 'SMTP_USER', 'SMTP_PASS']
     const missingEnvVars = requiredEnvVars.filter((key) => !process.env[key])
 
     if (missingEnvVars.length) {
+      console.error('Missing environment variables:', missingEnvVars);
       return NextResponse.json(
         {
           error: 'Email service is not configured.',
@@ -117,9 +117,11 @@ export async function POST(request) {
 
     const body = await request.json()
     const { name, email, phone, company, subject, message } = body
+    console.log('Form Data Received:', { name, email, subject });
 
     // Validate required fields
     if (!name || !email || !phone || !subject || !message) {
+      console.warn('Missing required fields in form data');
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
@@ -127,6 +129,12 @@ export async function POST(request) {
     }
 
     const port = parseInt(process.env.SMTP_PORT || '587')
+    console.log('SMTP Config:', {
+      host: process.env.SMTP_HOST,
+      port,
+      user: process.env.SMTP_USER,
+      secure: process.env.SMTP_SECURE === 'true' || port === 465
+    });
 
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
@@ -138,6 +146,15 @@ export async function POST(request) {
         pass: process.env.SMTP_PASS,
       },
     })
+
+    // Verify connection configuration
+    try {
+      await transporter.verify();
+      console.log('SMTP Connection Verified');
+    } catch (verifyError) {
+      console.error('SMTP Connection Verification Failed:', verifyError);
+      throw new Error(`SMTP Connection Failed: ${verifyError.message}`);
+    }
 
     const adminMailOptions = {
       from: process.env.SMTP_USER,
@@ -153,8 +170,13 @@ export async function POST(request) {
       html: buildUserEmail({ name, subject, message }),
     }
 
+    console.log('Sending Admin Email to:', adminMailOptions.to);
     await transporter.sendMail(adminMailOptions)
+    console.log('Admin Email Sent');
+
+    console.log('Sending User Email to:', userMailOptions.to);
     await transporter.sendMail(userMailOptions)
+    console.log('User Email Sent');
 
     return NextResponse.json(
       { message: 'Email sent successfully' },

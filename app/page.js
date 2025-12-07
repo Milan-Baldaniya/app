@@ -1,19 +1,11 @@
-'use client'
+import HomePageClient from './HomePageClient'
 
-import Hero from './components/Hero'
-import TricksSlider from './components/TricksSlider'
-import TrustSection from './components/TrustSection'
-import ProcessTimeline from './components/ProcessTimeline'
-import CTASection from './components/CTASection'
+export const metadata = {
+  title: 'Krushi World | Organic, Ayurvedic, Herbal, Fruits, Vegetables & Grains Exporter',
+  description: 'Krushi World is a leading exporter of organic products, ayurvedic products, herbal products, fresh fruits, vegetables, grains, pulses, seeds, oil seeds, oil, honey, and milk products. We deliver premium quality Indian agricultural products worldwide.',
+  keywords: 'krushi world, krushi product, organic product import export, ayurvedik product, herbal product, fruits, vegetables, grains, pulses, seeds, oil seeds, oil, honeyy product, milk product, Indian exporter',
+}
 
 export default function HomePage() {
-  return (
-    <div className="min-h-screen overflow-x-hidden">
-      <Hero />
-      <TricksSlider />
-      <TrustSection />
-      <ProcessTimeline />
-      <CTASection />
-    </div>
-  )
+  return <HomePageClient />
 }

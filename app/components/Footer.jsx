@@ -114,23 +114,53 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-8 pt-8 border-t flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
-          <p>© 2025 Krushi World Export. All rights reserved.</p>
-          <div className="flex flex-wrap gap-4">
-            <Link href="/privacy">
-              <Button variant="ghost" className="h-auto p-0 text-muted-foreground hover:text-foreground">
-                Privacy Policy
-              </Button>
-            </Link>
-            <Link href="/terms">
-              <Button variant="ghost" className="h-auto p-0 text-muted-foreground hover:text-foreground">
-                Terms of Service
-              </Button>
-            </Link>
+        <div className="mt-8 pt-8 border-t flex flex-col items-center gap-4 text-sm text-muted-foreground">
+          <div className="flex flex-col sm:flex-row justify-between items-center w-full gap-4">
+            <p>© 2025 Krushi World Export. All rights reserved.</p>
+            <div className="flex flex-wrap gap-4">
+              <Link href="/privacy">
+                <Button variant="ghost" className="h-auto p-0 text-muted-foreground hover:text-foreground">
+                  Privacy Policy
+                </Button>
+              </Link>
+              <Link href="/terms">
+                <Button variant="ghost" className="h-auto p-0 text-muted-foreground hover:text-foreground">
+                  Terms of Service
+                </Button>
+              </Link>
+            </div>
+          </div>
+          <div className="text-xs flex items-center gap-1">
+            <span>Created by</span>
+            <a
+              href="https://www.linkedin.com/in/meetkumar-vaghasiya-58a890261/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-bold text-amber-600 hover:text-amber-700 transition-colors"
+            >
+              Meet
+            </a>
+            <span>,</span>
+            <a
+              href="https://www.linkedin.com/in/milan-baladaniya-bba615261/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-bold text-amber-600 hover:text-amber-700 transition-colors"
+            >
+              Milan
+            </a>
+            <span>&</span>
+            <a
+              href="https://www.linkedin.com/in/omish-pipaliya/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-bold text-amber-600 hover:text-amber-700 transition-colors"
+            >
+              Omish
+            </a>
           </div>
         </div>
       </div>
     </footer>
   )
 }
-
